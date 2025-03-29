@@ -1,7 +1,14 @@
+import {NotFound} from "../components/404";
+
 export const routes = [
     {
-        path: '',
+        path: '*',
+        element: <NotFound />,
+        name: '404',
+    },
+    {
+        path: '/',
         element: '',
-        name: '',
+        name: 'main',
     },
 ]
