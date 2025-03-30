@@ -14,7 +14,7 @@ export const routes = [
     },
     {
         path: '/dictionaries',
-        element: <UserDictionaries/>,
+        element: <UserDictionaries />,
         name: 'dictionaries',
     }
 ]
