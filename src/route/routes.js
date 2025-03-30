@@ -1,4 +1,5 @@
 import {NotFound} from "../components/404";
+import {UserDictionaries} from "../pages/UserDictionaries";
 
 export const routes = [
     {
@@ -11,4 +12,9 @@ export const routes = [
         element: '',
         name: 'main',
     },
+    {
+        path: '/dictionaries',
+        element: <UserDictionaries/>,
+        name: 'dictionaries',
+    }
 ]
