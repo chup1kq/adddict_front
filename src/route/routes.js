@@ -1,4 +1,6 @@
 import {NotFound} from "../components/404";
+import {Registration} from "../components/Registration";
+import {Login} from "../components/Login";
 
 export const routes = [
     {
@@ -7,8 +9,13 @@ export const routes = [
         name: '404',
     },
     {
-        path: '/',
-        element: '',
-        name: 'main',
+        path: '/registration',
+        element: <Registration />,
+        name: 'Sign in',
+    },
+    {
+        path: '/login',
+        element: <Login />,
+        name: 'Login',
     },
 ]
