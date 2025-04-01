@@ -1,26 +1,9 @@
+import {ValidationError} from "../enums/ValidationErrors"
+
 export default class Validation {
 
     constructor() {
         this.errors = [];
-    }
-
-     ValidationError = {
-        EMPTY_FIELD: {
-            code: "EMPTY_FIELD",
-            message: "Поле не может быть пустым",
-        },
-        INVALID_EMAIL: {
-            code: "INVALID_EMAIL",
-            message: "Неверный формат email",
-        },
-        PASSWORD_TOO_SHORT: {
-            code: "PASSWORD_TOO_SHORT",
-            message: "Пароль должен содержать минимум 6 символов",
-        },
-        NOT_A_NUMBER: {
-            code: "NOT_A_NUMBER",
-            message: "Значение должно быть числом",
-        },
     }
 
     validate(login, password) {
@@ -29,11 +12,27 @@ export default class Validation {
     }
 
     validateLogin(login) {
-        this.errors.push(this.ValidationError.EMPTY_FIELD);
+        if ((!login || !login.trim()) && !this.errors.includes(ValidationError.EMPTY_FIELD)) {
+            this.errors.push(ValidationError.EMPTY_FIELD);
+        }
     }
 
     validatePassword(password){
-        this.errors.push(this.ValidationError.PASSWORD_TOO_SHORT);
+        if ((!password || !password.trim()) && !this.errors.includes(ValidationError.EMPTY_FIELD)) {
+            this.errors.push(ValidationError.EMPTY_FIELD);
+        }
+
+        if (password.length < 8) {
+            this.errors.push(ValidationError.PASSWORD_TOO_SHORT);
+        }
+
+        if (!/[!@#$%^&*]/.test(password)) {
+            this.errors.push(ValidationError.PASSWORD_SPECIAL_CHAR);
+        }
+
+        if (!/(?=.*[a-z])(?=.*[A-Z])/.test(password)) {
+            this.errors.push(ValidationError.PASSWORD_CASE);
+        }
     }
 
     clearErrors() {

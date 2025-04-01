@@ -1,24 +1,29 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import {BsEye, BsEyeSlash} from "react-icons/bs";
-import Validation from "../functions/Validation";
 import "../static/styles/Authentication.css";
+import {ValidationError} from "../enums/ValidationErrors";
 
 export function Login() {
-    const [login, setLogin] = useState("");
+    const [login, setLogin] = useState(
+        localStorage.getItem("savedLogin") || ""
+    );
     const [password, setPassword] = useState("");
     const [passwordVisible, setPasswordVisible] = useState(false);
     const [errors, setErrors] = useState([]);
-    const validation = new Validation();
 
     function handleLogin() {
-        validation.clearErrors();
-        validation.validate(login, password);
+        setErrors([]);
+        if (!(login && password)) {
+            setErrors([ValidationError.EMPTY_FIELD]);
+            return;
+        }
 
-        setErrors([...validation.errors]);
-
-        console.log(errors);
-        console.log(validation.errors);
+        // Запрос на сервер...
     }
+
+    useEffect(() => {
+        localStorage.setItem("savedLogin", login);
+    }, [login]);
 
     return (
         <div className="container d-flex justify-content-center align-items-center"
@@ -47,10 +52,10 @@ export function Login() {
                         </span>
                     </div>
                     {errors.length > 0 && (
-                        <div className="mt-1">
+                        <div className="mt-3 small">
                             {errors.map((error, index) => (
                                 <div key={index}
-                                     className="alert alert-danger mb-1 text-lg-start"
+                                     className="alert alert-danger mb-1 p-1 text-lg-start"
                                      role="alert">
                                     {error.message}
                                 </div>
