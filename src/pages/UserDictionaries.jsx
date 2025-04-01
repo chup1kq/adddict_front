@@ -1,57 +1,8 @@
-const dicts = [
-    {
-        id: 1,
-        title: 'Животные',
-        description: 'словарь для животных',
-        is_published: false,
-        words: {
-            'word1' : 'translation',
-            'word2' : 'translation',
-        },
-        created_at: 1686825045000,
-    },
-    {
-        id: 2,
-        title: 'Блюда',
-        description: 'Японская кухня',
-        is_published: true,
-        words: {
-            'word3' : 'translation',
-            'word4' : 'translation',
-        },
-        created_at: 1686826045000,
-    },
-    {
-        id: 3,
-        title: 'просто словарь',
-        description: '',
-        is_published: false,
-        words: {
-            'word5' : 'translation',
-            'word6' : 'translation',
-        },
-        created_at: 1646826045000,
-    },
-    {
-        id: 4,
-        title: 'Древесина',
-        description: 'справочник для лесоруба',
-        is_published: true,
-        words: {
-            'word7' : 'translation',
-            'word8' : 'translation',
-            'word9' : 'translation',
-            'word10' : 'translation',
-        },
-        created_at: 1686826005000,
-    }
-];
-
-export const UserDictionaries = () => {
+export const UserDictionaries = ({dictionaries}) => {
     return (
         <div className="container px-5 my-5">
             <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
-                {dicts.map((dict) => (
+                {dictionaries.map((dict) => (
                     <div className="col" key={dict.id}>
                         <div className="card h-100 bg-light" id={dict.id}>
                             <div className="dropdown position-absolute top-0 end-0 m-2">
