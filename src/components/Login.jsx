@@ -1,15 +1,17 @@
 import React, {useState, useEffect} from "react";
-import {BsEye, BsEyeSlash} from "react-icons/bs";
+import {useNavigate} from "react-router-dom";
 import "../static/styles/Authentication.css";
 import {ValidationError} from "../enums/ValidationErrors";
+import {Button} from "./Button";
+import {PasswordInput} from './PasswordInput';
 
 export function Login() {
     const [login, setLogin] = useState(
         localStorage.getItem("savedLogin") || ""
     );
     const [password, setPassword] = useState("");
-    const [passwordVisible, setPasswordVisible] = useState(false);
     const [errors, setErrors] = useState([]);
+    const navigate = useNavigate();
 
     function handleLogin() {
         setErrors([]);
@@ -19,6 +21,7 @@ export function Login() {
         }
 
         // Запрос на сервер...
+        navigate("/");
     }
 
     useEffect(() => {
@@ -36,21 +39,9 @@ export function Login() {
                            placeholder="Login"
                            value={login}
                     />
-                    <div className="position-relative">
-                        <input className="form-control pe-4"
-                               onChange={e => setPassword(e.target.value)}
-                               type={passwordVisible ? "text" : "password"}
-                               placeholder="Password"
-                               value={password}
-                        />
-                        <span className="position-absolute top-50 end-0 translate-middle-y me-2"
-                              style={{cursor: 'pointer'}}
-                              onMouseDown={() => setPasswordVisible(true)}
-                              onMouseUp={() => setPasswordVisible(false)}
-                              onMouseLeave={() => setPasswordVisible(false)}>
-                            {passwordVisible ? <BsEye/> : <BsEyeSlash/>}
-                        </span>
-                    </div>
+                    <PasswordInput value={password}
+                                   onChange={e => setPassword(e.target.value)}
+                    />
                     {errors.length > 0 && (
                         <div className="mt-3 small">
                             {errors.map((error, index) => (
@@ -63,12 +54,7 @@ export function Login() {
                         </div>
                     )}
                 </div>
-                <button className="btn btn-primary w-100 mb-2"
-                        type="button"
-                        onClick={handleLogin}
-                >
-                    Login
-                </button>
+                <Button text={'Login'} onClick={handleLogin}/>
                 <p className="m-0">Еще нет аккаунта? <a href="/registration">Зарегистрируйтесь</a></p>
             </form>
         </div>

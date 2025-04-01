@@ -1,38 +1,46 @@
-import {useAuth} from "../context/AuthContext";
-import {BsFillPersonFill} from "react-icons/bs";
-
+import { useAuth } from "../context/AuthContext";
+import { BsFillPersonFill } from "react-icons/bs";
 import "../static/styles/Header.css";
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 export const Header = () => {
-    const {token} = useAuth();
+    const { token } = useAuth();
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light px-5 justify-content-between">
-            <a href={'/'}
-               className={'logo'}
-            >
-                <h1>AddDict</h1>
-            </a>
-            <div>
-                {!token ?
-                    <div className={'d-flex align-items-center'}>
-                        <div className={'me-1'}>
-                            <BsFillPersonFill className={'icon'}/>
+        <nav className="navbar navbar-expand-sm navbar-light bg-light px-5">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="/">AddDict</a>
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                >
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li className="nav-item">
+                            <a className="nav-link" href="#">Лента</a>
+                        </li>
+                        {token && (
+                            <li className="nav-item">
+                                <a className="nav-link" href="#">Мои словари</a>
+                            </li>
+                        )}
+                    </ul>
+                    {!token && (
+                        <div className="d-flex align-items-center">
+                            <BsFillPersonFill className="me-2" />
+                            <a href="/login" className="auth me-2">Войти</a>
+                            <span className="me-2">/</span>
+                            <a href="/registration" className="auth">Зарегистрироваться</a>
                         </div>
-                        <a href={'/login'}
-                           className={'auth'}
-                        >
-                            Войти
-                        </a>
-                        <p className={'my-0 mx-1 hd'}>/</p>
-                        <a href={'/registration'}
-                           className={'auth'}
-                        >
-                            Зарегистрироваться
-                        </a>
-                    </div> :
-                    <></>
-                }
+                    )}
+                </div>
             </div>
         </nav>
     );

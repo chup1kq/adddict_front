@@ -1,15 +1,22 @@
-.icon {
-    font-size: 24px;
+.navbar {
+    height: 60px;
     color: #d4a373;
 }
 
-.logo {
-    text-decoration: none;
+.navbar a {
     color: #d4a373;
 }
 
-.hd {
-    color: #d4a373;
+.navbar-brand {
+    font-size: 28px !important;
+}
+
+.navbar-nav {
+    align-items: center;
+}
+
+.nav-link {
+    font-size: 24px !important;
 }
 
 .auth {
