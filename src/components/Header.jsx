@@ -1,37 +1,38 @@
-export const Header = () => {
-    return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light px-5">
-            <a className="navbar-brand" href="#">Navbar</a>
-            <button
-                className="navbar-toggler"
-                type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <span className="navbar-toggler-icon"></span>
-            </button>
+import {useAuth} from "../context/AuthContext";
+import {BsFillPersonFill} from "react-icons/bs";
 
-            <div className="collapse navbar-collapse justify-content-between" id="navbarSupportedContent">
-                <ul className="navbar-nav me-auto">
-                    <li className="nav-item active">
-                        <a className="nav-link" href="#">
-                            Home <span className="visually-hidden">(current)</span>
+import "../static/styles/Header.css";
+
+export const Header = () => {
+    const {token} = useAuth();
+
+    return (
+        <nav className="navbar navbar-expand-lg navbar-light bg-light px-5 justify-content-between">
+            <a href={'/'}
+               className={'logo'}
+            >
+                <h1>AddDict</h1>
+            </a>
+            <div>
+                {!token ?
+                    <div className={'d-flex align-items-center'}>
+                        <div className={'me-1'}>
+                            <BsFillPersonFill className={'icon'}/>
+                        </div>
+                        <a href={'/login'}
+                           className={'auth'}
+                        >
+                            Войти
                         </a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link" href="#">Link</a>
-                    </li>
-                    <li className="nav-item">
-                        <a className="nav-link disabled" href="#">Disabled</a>
-                    </li>
-                </ul>
-                <form className="d-flex">
-                    <input className="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-                    <button className="btn btn-outline-primary" type="submit">Search</button>
-                </form>
+                        <p className={'my-0 mx-1 hd'}>/</p>
+                        <a href={'/registration'}
+                           className={'auth'}
+                        >
+                            Зарегистрироваться
+                        </a>
+                    </div> :
+                    <></>
+                }
             </div>
         </nav>
     );

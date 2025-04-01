@@ -1,0 +1,25 @@
+.icon {
+    font-size: 24px;
+    color: #d4a373;
+}
+
+.logo {
+    text-decoration: none;
+    color: #d4a373;
+}
+
+.hd {
+    color: #d4a373;
+}
+
+.auth {
+    text-decoration: none;
+    color: #d4a373;
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.3s ease-in-out;
+}
+
+.auth:hover {
+    text-decoration-line: underline;
+    text-decoration-color: currentColor;
+}
