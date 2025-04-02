@@ -1,3 +1,6 @@
+import { FaLock, FaLockOpen } from "react-icons/fa";
+import '../static/styles/dictionaries.css';
+
 export const UserDictionaries = ({dictionaries}) => {
     return (
         <div className="container px-5 my-5">
@@ -24,19 +27,28 @@ export const UserDictionaries = ({dictionaries}) => {
 
                             <div className="card-body">
                                 <div className="d-flex align-items-center mb-3">
-                                    <h5 className="card-title mb-0 me-2">{dict.title}</h5>
+                                    <h5 className="card-title mb-0 me-2" style={{
+                                        maxWidth: 'calc(60%)',
+                                        wordWrap: 'break-word',
+                                        whiteSpace: 'normal'
+                                    }}>
+                                        {dict.title}
+                                    </h5>
                                     <span className={`badge ${dict.is_published ? 'bg-success' : 'bg-secondary'}`}>
-                                        {dict.is_published ? 'Публичный' : 'Приватный'}
-                                    </span>
+        {dict.is_published ? <FaLockOpen /> : <FaLock />}
+    </span>
                                 </div>
                                 <p className="card-text">
                                     {dict.description || <span className="text-muted">Описание отсутствует</span>}
                                 </p>
                                 <div className="d-flex justify-content-between align-items-center mt-3">
-                                    <button className="btn btn-outline-primary btn-sm">Тренировка</button>
-                                    <p className="card-text small text-muted mb-0">
-                                        Создан: {convertDate(dict.created_at)}
-                                    </p>
+                                    <button className="btn btn-outline-primary custom-outline-btn btn-sm">
+                                        Тренировка
+                                    </button>
+                                    <div className="d-flex flex-column text-end">
+                                        <span className="small text-muted">Создан:</span>
+                                        <span className="small">{convertDate(dict.created_at)}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
