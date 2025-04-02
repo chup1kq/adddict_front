@@ -30,3 +30,15 @@
     text-decoration-line: underline;
     text-decoration-color: currentColor;
 }
+
+@media (max-width: 991.99px) {
+    .navbar-collapse .navbar-nav {
+        align-items: flex-start;
+    }
+
+    .navbar-collapse .nav-item {
+        display: flex;
+        align-items: center;
+        padding-top: 8.5px;
+    }
+}
