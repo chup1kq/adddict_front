@@ -4,8 +4,10 @@ import "../static/styles/Authentication.css";
 import {ValidationError} from "../enums/ValidationErrors";
 import {Button} from "./Button";
 import {PasswordInput} from './PasswordInput';
+import {useAuth} from "../context/AuthContext";
 
 export function Login() {
+    const {setToken, setUser} = useAuth();
     const [login, setLogin] = useState(
         localStorage.getItem("savedLogin") || ""
     );
@@ -19,6 +21,9 @@ export function Login() {
             setErrors([ValidationError.EMPTY_FIELD]);
             return;
         }
+
+        // setToken('Rio');
+        // setUser(login);
 
         // Запрос на сервер...
         navigate("/");

@@ -28,7 +28,7 @@ export const Header = () => {
                         </li>
                         {token && (
                             <li className="nav-item">
-                                <a className="nav-link" href="#">Мои словари</a>
+                                <a className="nav-link" href="/account">Мои словари</a>
                             </li>
                         )}
                     </ul>
@@ -41,7 +41,7 @@ export const Header = () => {
                                 <a href="/registration" className="auth">Зарегистрироваться</a>
                             </>
                         ) : (
-                            <a href={'#'}>
+                            <a href={'/account'}>
                                 {user}
                             </a>
                         )}
