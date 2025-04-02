@@ -5,10 +5,15 @@ const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
     const [token, setToken_] = useState(localStorage.getItem("token"));
+    const [user, setUser_] = useState(localStorage.getItem('user'));
 
     const setToken = (newToken) => {
         setToken_(newToken);
     };
+
+    const setUser = (newUser) => {
+        setUser_(newUser);
+    }
 
     useEffect(() => {
         if (token) {
@@ -20,12 +25,22 @@ const AuthProvider = ({ children }) => {
         }
     }, [token]);
 
+    useEffect(() => {
+        if (user) {
+            localStorage.setItem('user', user);
+        } else {
+            localStorage.removeItem('user');
+        }
+    }, [user]);
+
     const contextValue = useMemo(
         () => ({
             token,
+            user,
             setToken,
+            setUser,
         }),
-        [token]
+        [token, user]
     );
 
     return (

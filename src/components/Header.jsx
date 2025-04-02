@@ -1,10 +1,10 @@
-import { useAuth } from "../context/AuthContext";
-import { BsFillPersonFill } from "react-icons/bs";
+import {useAuth} from "../context/AuthContext";
+import {BsFillPersonFill} from "react-icons/bs";
 import "../static/styles/Header.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 export const Header = () => {
-    const { token } = useAuth();
+    const {token, user} = useAuth();
 
     return (
         <nav className="navbar navbar-expand-sm navbar-light bg-light px-5">
@@ -32,16 +32,23 @@ export const Header = () => {
                             </li>
                         )}
                     </ul>
-                    {!token && (
-                        <div className="d-flex align-items-center">
-                            <BsFillPersonFill className="me-2" />
-                            <a href="/login" className="auth me-2">Войти</a>
-                            <span className="me-2">/</span>
-                            <a href="/registration" className="auth">Зарегистрироваться</a>
-                        </div>
-                    )}
+                    <div className="d-flex align-items-center">
+                        <BsFillPersonFill className="me-2"/>
+                        {!token ? (
+                            <>
+                                <a href="/login" className="auth me-2">Войти</a>
+                                <span className="me-2">/</span>
+                                <a href="/registration" className="auth">Зарегистрироваться</a>
+                            </>
+                        ) : (
+                            <a href={'#'}>
+                                {user}
+                            </a>
+                        )}
+                    </div>
                 </div>
             </div>
         </nav>
-    );
+    )
+        ;
 };
