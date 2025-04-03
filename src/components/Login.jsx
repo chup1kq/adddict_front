@@ -17,13 +17,13 @@ export function Login() {
 
     function handleLogin() {
         setErrors([]);
-        if (!(login && password)) {
-            setErrors([ValidationError.EMPTY_FIELD]);
-            return;
-        }
+        // if (!(login && password)) {
+        //     setErrors([ValidationError.EMPTY_FIELD]);
+        //     return;
+        // }
 
-        // setToken('Rio');
-        // setUser(login);
+        setToken('123');
+        setUser('user');
 
         // Запрос на сервер...
         navigate("/");
