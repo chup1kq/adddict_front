@@ -6,7 +6,7 @@ import {Button} from "./Button";
 import {PasswordInput} from './PasswordInput';
 import {useAuth} from "../context/AuthContext";
 
-const apiUrl = "http://localhost:3000/api";
+const apiUrl = "http://localhost:8081/api";
 
 export function Login() {
     const {setToken, setUser} = useAuth();
