@@ -6,6 +6,8 @@ import {Button} from "./Button";
 import {PasswordInput} from './PasswordInput';
 import {useAuth} from "../context/AuthContext";
 
+const apiUrl = "http://localhost:3000/api";
+
 export function Login() {
     const {setToken, setUser} = useAuth();
     const [login, setLogin] = useState(
@@ -15,18 +17,46 @@ export function Login() {
     const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
 
-    function handleLogin() {
+    async function handleLogin() {
         setErrors([]);
-        // if (!(login && password)) {
-        //     setErrors([ValidationError.EMPTY_FIELD]);
-        //     return;
-        // }
 
-        setToken('123');
-        setUser('user');
+        if (!(login && password)) {
+            setErrors([ValidationError.EMPTY_FIELD]);
+            return;
+        }
 
-        // Запрос на сервер...
-        navigate("/");
+        try {
+            const response = await fetch(`${apiUrl}/auth/login`, {
+                method: "POST", //TODO PATCH
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    login,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                //TODO check http status
+                setErrors([ValidationError.INVALID_CREDENTIALS]);
+                return;
+            }
+
+            const data = await response.json();
+
+            // Сохраняем токен и данные пользователя в контексте
+            setToken(data.token);
+            setUser(login);
+
+            // Перенаправляем на главную страницу
+            navigate("/");
+
+        } catch (error) {
+            setErrors([{
+                message: error.message || "Неизвестная ошибка при входе"
+            }]);
+        }
     }
 
     useEffect(() => {
