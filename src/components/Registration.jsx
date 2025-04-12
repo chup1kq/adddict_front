@@ -4,6 +4,9 @@ import "../static/styles/Authentication.css";
 import {ValidationError} from "../enums/ValidationErrors";
 import {Button} from "./Button";
 import {PasswordInput} from "./PasswordInput";
+import {useNavigate} from "react-router-dom";
+
+const apiUrl = 'http://localhost:8081/api';
 
 export function Registration() {
     const [login, setLogin] = useState("");
@@ -11,8 +14,9 @@ export function Registration() {
     const [confirmedPassword, setConfirmedPassword] = useState("");
     const [errors, setErrors] = useState([]);
     const validation = new Validation();
+    const navigate = useNavigate();
 
-    function handleRegistration() {
+    async function handleRegistration() {
         validation.clearErrors();
         // validation.validate(login, password);
         setErrors([...validation.errors]);
@@ -26,6 +30,26 @@ export function Registration() {
         }
 
         // Запрос на сервер...
+        try {
+            const response = await fetch(`${apiUrl}/v1/user/register`, {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    login,
+                    password,
+                }),
+            });
+
+            if (!response.ok) {
+                //TODO
+            }
+
+            navigate("/login");
+        } catch (error) {
+
+        }
     }
 
     return (
