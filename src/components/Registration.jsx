@@ -6,7 +6,7 @@ import {Button} from "./Button";
 import {PasswordInput} from "./PasswordInput";
 import {useNavigate} from "react-router-dom";
 
-const apiUrl = 'http://localhost:8081/api';
+const apiUrl = 'http://localhost:8081/api/v1';
 
 export function Registration() {
     const [login, setLogin] = useState("");
@@ -31,7 +31,7 @@ export function Registration() {
 
         // Запрос на сервер...
         try {
-            const response = await fetch(`${apiUrl}/v1/user/register`, {
+            const response = await fetch(`${apiUrl}/user/register`, {
                 method: 'POST',
                 headers: {
                     "Content-Type": "application/json",
