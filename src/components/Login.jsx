@@ -6,7 +6,7 @@ import {Button} from "./Button";
 import {PasswordInput} from './PasswordInput';
 import {useAuth} from "../context/AuthContext";
 
-const apiUrl = "http://localhost:8081/api";
+const apiUrl = "http://localhost:8081/api/v1";
 
 export function Login() {
     const {setToken, setUser} = useAuth();
@@ -27,7 +27,7 @@ export function Login() {
 
         try {
             const response = await fetch(`${apiUrl}/auth/login`, {
-                method: "POST", //TODO PATCH
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
                 },
@@ -43,10 +43,10 @@ export function Login() {
                 return;
             }
 
-            const data = await response.json();
+            const data = await response.text();
 
             // Сохраняем токен и данные пользователя в контексте
-            setToken(data.token);
+            setToken(data);
             setUser(login);
 
             // Перенаправляем на главную страницу

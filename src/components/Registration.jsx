@@ -48,7 +48,9 @@ export function Registration() {
 
             navigate("/login");
         } catch (error) {
-
+            setErrors([{
+                message: error.message || "Неизвестная ошибка при входе"
+            }]);
         }
     }
 
