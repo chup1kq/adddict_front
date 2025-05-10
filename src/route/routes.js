@@ -3,6 +3,7 @@ import {UserDictionaries} from "../pages/UserDictionaries";
 import {User} from "../pages/User";
 import {Registration} from "../components/Registration";
 import {Login} from "../components/Login";
+import {Dictionary} from "../pages/Dictionary"
 
 export const routes = [
     {
@@ -34,5 +35,10 @@ export const routes = [
         path: '/account',
         element: <User />,
         name: 'User profile',
+    },
+    {
+        path: '/dictionaries/:id',
+        element: <Dictionary />,
+        name: 'Dictionary details',
     },
 ]

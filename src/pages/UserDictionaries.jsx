@@ -1,13 +1,22 @@
 import { FaLock, FaLockOpen } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import "../static/styles/CardDictionary.css";
 
 export const UserDictionaries = ({dictionaries}) => {
+    const navigate = useNavigate();
+
+    const handleDictionaryClick = (dictId) => {
+        navigate(`/dictionaries/${dictId}`);
+    };
+
     return (
         <div className="container px-5 my-5">
             <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                 {dictionaries.map((dict) => (
                     <div className="col" key={dict.id}>
-                        <div className="card h-100 bg-light card-dictionary">
+                        <div className="card h-100 bg-light card-dictionary"
+                            onClick={() => handleDictionaryClick(dict.id)}
+                        >
                             <div className="dropdown position-absolute top-0 end-0 m-2">
                                 <button
                                     className="btn btn-sm btn-outline-secondary dropdown-toggle"
