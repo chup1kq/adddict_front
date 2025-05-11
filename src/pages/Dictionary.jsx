@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
 import "../static/styles/WordCard.css";
 
 export const Dictionary = () => {
@@ -9,6 +10,10 @@ export const Dictionary = () => {
     const { user } = useAuth();
     const [dictionary, setDictionary] = useState(null);
     const [words, setWords] = useState([]);
+    const [showDeleteWindow, setShowDeleteWindow] = useState(false);
+    const [wordToDeleteId, setWordToDeleteId] = useState(null); // Только ID
+
+    const wordToDelete = words.find(word => word.id === wordToDeleteId);
 
     useEffect(() => {
         const fetchDictionary = async () => {
@@ -24,11 +29,9 @@ export const Dictionary = () => {
                     { id: 5, original: 'mouse', translation: 'мышь' },
                 ]
             };
-
             setDictionary(testDictionary);
             setWords(testDictionary.words);
         };
-
         fetchDictionary();
     }, [id]);
 
@@ -36,55 +39,76 @@ export const Dictionary = () => {
         // Логика редактирования
     };
 
-    const handleDeleteWord = (wordId) => {
-        // Логика удаления
+    const handleDeleteClick = (wordId) => {
+        setWordToDeleteId(wordId);
+        setShowDeleteWindow(true);
+    };
+
+    const handleConfirmDelete = () => {
+        // запрос на backend с удалением
+        console.log('Удаление слова с ID:', wordToDelete.id);
+        setShowDeleteWindow(false);
     };
 
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
-        <div className="container px-3 px-md-5 my-4">
-            <div className="card mb-4">
-                <div className="card-body">
-                    <h2 className="mb-3">{dictionary.title}</h2>
-                    <p className="text-muted mb-3">{dictionary.description}</p>
-                    {user && (
-                        <button className="btn custom-outline-btn btn-sm">Добавить слово</button>
-                    )}
+        <>
+            <div className="container px-3 px-md-5 my-4">
+                <div className="card mb-4">
+                    <div className="card-body">
+                        <h2 className="mb-3">{dictionary.title}</h2>
+                        <p className="text-muted mb-3">{dictionary.description}</p>
+                        {user && (
+                            <button className="btn custom-outline-btn btn-sm">Добавить слово</button>
+                        )}
+                    </div>
+                </div>
+
+                <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+                    {words.map(word => (
+                        <div key={word.id} className="col">
+                            <div className="card h-100 border-0 shadow-sm position-relative">
+                                <div className="card-body p-3">
+                                    <div className="d-flex flex-column">
+                                        <span className="fw-bold text-break mb-2">{word.original}</span>
+                                        <span className="text-muted text-break">{word.translation}</span>
+                                    </div>
+                                </div>
+                                <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
+                                    <button
+                                        className="btn btn-sm text-primary p-1 mb-1 btn-word"
+                                        onClick={() => handleEditWord(word.id)}
+                                        aria-label="Редактировать"
+                                    >
+                                        <FaEdit size={14} color={"#d4a373"} />
+                                    </button>
+                                    <button
+                                        className="btn btn-sm text-danger p-1"
+                                        onClick={() => handleDeleteClick(word.id)}
+                                        aria-label="Удалить"
+                                    >
+                                        <FaTrash size={14} />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
-                {words.map(word => (
-                    <div key={word.id} className="col">
-                        <div className="card h-100 border-0 shadow-sm position-relative">
-                            {/* основной контент карточки */}
-                            <div className="card-body p-3">
-                                <div className="d-flex flex-column">
-                                    <span className="fw-bold text-break mb-2">{word.original}</span>
-                                    <span className="text-muted text-break">{word.translation}</span>
-                                </div>
-                            </div>
-                            <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
-                                <button
-                                    className="btn btn-sm text-primary p-1 mb-1 btn-word"
-                                    onClick={() => handleEditWord(word.id)}
-                                    aria-label="Редактировать"
-                                >
-                                    <FaEdit size={14} color={"#d4a373"} />
-                                </button>
-                                <button
-                                    className="btn btn-sm text-danger p-1"
-                                    onClick={() => handleDeleteWord(word.id)}
-                                    aria-label="Удалить"
-                                >
-                                    <FaTrash size={14} />
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
+            {wordToDelete && (
+                <ConfirmationWindow
+                    show={showDeleteWindow}
+                    onCancel={() => setShowDeleteWindow(false)}
+                    onConfirm={handleConfirmDelete}
+                    title="Удалить слово?"
+                    message={`Действительно хотите удалить слово "${wordToDelete.original}"?`}
+                    confirmText="Удалить"
+                    cancelText="Отмена"
+                    confirmVariant="danger"
+                />
+            )}
+        </>
     );
 };
