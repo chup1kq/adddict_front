@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaEdit, FaTrash } from 'react-icons/fa';
+import "../static/styles/WordCard.css";
 
 export const Dictionary = () => {
     const { id } = useParams();
@@ -31,6 +32,14 @@ export const Dictionary = () => {
         fetchDictionary();
     }, [id]);
 
+    const handleEditWord = (wordId) => {
+        // Логика редактирования
+    };
+
+    const handleDeleteWord = (wordId) => {
+        // Логика удаления
+    };
+
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
@@ -55,6 +64,22 @@ export const Dictionary = () => {
                                     <span className="fw-bold text-break mb-2">{word.original}</span>
                                     <span className="text-muted text-break">{word.translation}</span>
                                 </div>
+                            </div>
+                            <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
+                                <button
+                                    className="btn btn-sm text-primary p-1 mb-1 btn-word"
+                                    onClick={() => handleEditWord(word.id)}
+                                    aria-label="Редактировать"
+                                >
+                                    <FaEdit size={14} color={"#d4a373"} />
+                                </button>
+                                <button
+                                    className="btn btn-sm text-danger p-1"
+                                    onClick={() => handleDeleteWord(word.id)}
+                                    aria-label="Удалить"
+                                >
+                                    <FaTrash size={14} />
+                                </button>
                             </div>
                         </div>
                     </div>
