@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
+import { WordEditModal } from '../components/dictionary/WordEditModal';
 import "../static/styles/WordCard.css";
 
 export const Dictionary = () => {
@@ -10,8 +11,12 @@ export const Dictionary = () => {
     const { user } = useAuth();
     const [dictionary, setDictionary] = useState(null);
     const [words, setWords] = useState([]);
+
     const [showDeleteWindow, setShowDeleteWindow] = useState(false);
     const [wordToDeleteId, setWordToDeleteId] = useState(null); // Только ID
+
+    const [showEditModal, setShowEditModal] = useState(false);
+    const [currentWord, setCurrentWord] = useState(null);
 
     const wordToDelete = words.find(word => word.id === wordToDeleteId);
 
@@ -35,8 +40,37 @@ export const Dictionary = () => {
         fetchDictionary();
     }, [id]);
 
-    const handleEditWord = (wordId) => {
-        // Логика редактирования
+    const handleEditClick = (word) => {
+        setCurrentWord(word);
+        setShowEditModal(true);
+    };
+
+    const handleAddWordClick = () => {
+        setCurrentWord({ original: '', translation: '' });
+        setShowEditModal(true);
+    };
+
+    const handleSaveWord = ({ original, translation }) => {
+        if (currentWord?.id) {
+            // Здесь будет запрос на backend
+            console.log('Обновление слова:', currentWord.id, original, translation);
+            // Только после успешного ответа от сервера обновляем состояние
+            // (пока тут для теста функционала)
+            setWords(words.map(w => w.id === currentWord.id ? {...w, original, translation} : w));
+        } else {
+            // Здесь будет запрос на backend
+            console.log('Добавление слова:', original, translation);
+            // Только после успешного ответа от сервера добавляем новое слово
+            // (пока тут для теста функционала)
+            setWords([...words, {id: 6, original, translation}]);
+        }
+        setShowEditModal(false);
+        setCurrentWord(null); // Сбрасываем текущее слово
+    };
+
+    const handleCancelEdit = () => {
+        setShowEditModal(false);
+        setCurrentWord(null);
     };
 
     const handleDeleteClick = (wordId) => {
@@ -60,7 +94,13 @@ export const Dictionary = () => {
                         <h2 className="mb-3">{dictionary.title}</h2>
                         <p className="text-muted mb-3">{dictionary.description}</p>
                         {user && (
-                            <button className="btn custom-outline-btn btn-sm">Добавить слово</button>
+                            <button
+                                className="btn custom-outline-btn btn-sm"
+                                onClick={handleAddWordClick}
+                            >
+                                Добавить слово
+                            </button>
+
                         )}
                     </div>
                 </div>
@@ -78,7 +118,7 @@ export const Dictionary = () => {
                                 <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
                                     <button
                                         className="btn btn-sm text-primary p-1 mb-1 btn-word"
-                                        onClick={() => handleEditWord(word.id)}
+                                        onClick={() => handleEditClick(word)}
                                         aria-label="Редактировать"
                                     >
                                         <FaEdit size={14} color={"#d4a373"} />
@@ -109,6 +149,14 @@ export const Dictionary = () => {
                     confirmVariant="danger"
                 />
             )}
+            <WordEditModal
+                show={showEditModal}
+                onCancel={handleCancelEdit}
+                onSave={handleSaveWord}
+                title={currentWord?.id ? "Редактирование слова" : "Добавление нового слова"}
+                initialOriginal={currentWord?.original || ''}
+                initialTranslation={currentWord?.translation || ''}
+            />
         </>
     );
 };
