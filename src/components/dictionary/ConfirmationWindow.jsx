@@ -1,42 +1,36 @@
 import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import '../../static/styles/ConfirmationWindow.css';
 
 export const ConfirmationWindow = ({
-            show,
-            onCancel,
-            onConfirm,
-            title = "Подтвердите действие",
-            message = "Продолжить?",
-            confirmText = "Продолжить",
-            cancelText = "Отмена"
-        }) => {
+                                       show,
+                                       onCancel,
+                                       onConfirm,
+                                       title = "Подтвердите действие",
+                                       message = "Продолжить?",
+                                       confirmText = "Продолжить",
+                                       cancelText = "Отмена",
+                                       confirmVariant = "danger", // 'neutral' или 'danger'
+                                       cancelVariant = "outline"   // 'outline' или 'filled'
+                                   }) => {
     return (
-        <Modal show={show} onHide={onCancel} centered>
-            <Modal.Header closeButton style={{ borderBottom: '1px solid #f8edeb' }}>
+        <Modal show={show} onHide={onCancel} centered className="confirmation-modal">
+            <Modal.Header closeButton className="confirmation-header">
                 <Modal.Title>{title}</Modal.Title>
             </Modal.Header>
-            <Modal.Body>
+            <Modal.Body className="confirmation-body">
                 {message}
             </Modal.Body>
-            <Modal.Footer style={{ borderTop: '1px solid #f8edeb' }}>
+            <Modal.Footer className="confirmation-footer">
                 <Button
-                    variant="outline-secondary"
                     onClick={onCancel}
-                    style={{
-                        color: '#6c757d',
-                        borderColor: '#d4a373'
-                    }}
+                    className={`confirmation-button cancel-button ${cancelVariant}`}
                 >
                     {cancelText}
                 </Button>
                 <Button
-                    variant="danger"
                     onClick={onConfirm}
-                    style={{
-                        backgroundColor: '#d4a373',
-                        borderColor: '#d4a373',
-                        color: 'white'
-                    }}
+                    className={`confirmation-button confirm-button ${confirmVariant}`}
                 >
                     {confirmText}
                 </Button>
@@ -52,5 +46,7 @@ ConfirmationWindow.propTypes = {
     title: PropTypes.string,
     message: PropTypes.string,
     confirmText: PropTypes.string,
-    cancelText: PropTypes.string
+    cancelText: PropTypes.string,
+    confirmVariant: PropTypes.oneOf(['neutral', 'danger']),
+    cancelVariant: PropTypes.oneOf(['outline', 'filled'])
 };
