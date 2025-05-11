@@ -109,7 +109,9 @@ export const Dictionary = () => {
                     {words.map(word => (
                         <div key={word.id} className="col">
                             <div className="card h-100 border-0 shadow-sm position-relative">
-                                <div className="card-body p-3">
+                                <div className="card-body p-3" style={{
+                                    background: '#f8f9fa',
+                                }}>
                                     <div className="d-flex flex-column">
                                         <span className="fw-bold text-break mb-2">{word.original}</span>
                                         <span className="text-muted text-break">{word.translation}</span>
