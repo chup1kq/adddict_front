@@ -1,6 +1,6 @@
 import { Modal, Button } from 'react-bootstrap';
 import PropTypes from 'prop-types';
-import '../../static/styles/ConfirmationWindow.css';
+import '../../static/styles/dictionaryWindows/ConfirmationWindow.css';
 
 export const ConfirmationWindow = ({
                                        show,

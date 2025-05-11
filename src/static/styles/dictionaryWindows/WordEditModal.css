@@ -1,0 +1,41 @@
+.word-edit-modal {
+    border: 1px solid #d4a373;
+    border-radius: 8px;
+}
+
+.word-edit-header {
+    background-color: #fcdeb3;
+    border-bottom: 1px solid #f8edeb;
+}
+
+.word-edit-body {
+    padding: 1.5rem;
+}
+
+.word-edit-footer {
+    border-top: 1px solid #f8edeb;
+}
+
+.word-edit-save {
+    background-color: #d4a373 !important;
+    border-color: #d4a373 !important;
+}
+
+.word-edit-save:hover {
+    background-color: #c1915e !important;
+    border-color: #c1915e !important;
+}
+
+.word-edit-save:disabled {
+    background-color: #cccccc;
+    border-color: #cccccc;
+}
+
+.word-edit-cancel {
+    color: #6c757d;
+    border-color: #d4a373;
+}
+
+.word-edit-cancel:hover {
+    background-color: #f8f9fa;
+}
