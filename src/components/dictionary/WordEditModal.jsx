@@ -19,9 +19,11 @@ export const WordEditModal = ({
     const [translation, setTranslation] = useState(initialTranslation);
 
     useEffect(() => {
-        setOriginal(initialOriginal);
-        setTranslation(initialTranslation);
-    }, [initialOriginal, initialTranslation]);
+        if (show) {
+            setOriginal(initialOriginal);
+            setTranslation(initialTranslation);
+        }
+    }, [show, initialOriginal, initialTranslation]);
 
     const handleSave = () => {
         onSave({
