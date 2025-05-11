@@ -63,11 +63,13 @@
 
 .confirm-button.danger {
     background-color: #dc3545;
+    border-color: #c82333;
     color: white;
 }
 
 .confirm-button.danger:hover {
     background-color: #c82333;
+    border-color: #c82333;
 }
 
 .confirm-button.danger:active {
@@ -83,6 +85,7 @@
 
 .cancel-button.outline:hover {
     background-color: #f8f9fa;
+    border-color: #5a6268;
     color: #5a6268;
 }
 
