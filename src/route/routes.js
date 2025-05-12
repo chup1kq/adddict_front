@@ -5,6 +5,7 @@ import {Registration} from "../components/Registration";
 import {Login} from "../components/Login";
 import {useAuth} from "../context/AuthContext";
 import {useRoutes} from "react-router-dom";
+import {Quiz} from "../pages/Quiz";
 
 export const AppRoutes = () => {
     const {token} = useAuth();
@@ -34,5 +35,9 @@ export const AppRoutes = () => {
             path: '/account',
             element: <User/>,
         },
+        {
+            path: '/quiz/:type/:url',
+            element: <Quiz />,
+        }
     ]);
 }
