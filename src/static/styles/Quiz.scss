@@ -17,17 +17,23 @@
   flex-direction: column;
   gap: 15px;
   margin-top: 25px;
+  position: relative;
+
+  &.error {
+    animation: gentleShake 0.4s ease-in-out;
+  }
 
   input {
     font-family: 'Nunito', sans-serif;
     padding: 15px 20px;
-    border: 2px solid #d4a373; // Основной акцентный цвет
+    border: 2px solid #d4a373;
     border-radius: 15px;
     font-size: 16px;
-    transition: all 0.2s ease-in-out;
+    transition: all 0.3s ease-in-out;
     outline: none;
     background-color: white;
     color: #333;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 
     &:focus {
       border-color: darken(#d4a373, 10%);
@@ -35,7 +41,18 @@
     }
 
     &::placeholder {
-      color: lightgray;
+      color: lighten(#d4a373, 25%);
+      font-style: italic;
+    }
+
+    &.error-state {
+      border-color: #e76f51;
+      background-color: lighten(#f8edeb, 2%);
+      box-shadow: 0 0 0 3px rgba(231, 111, 81, 0.2);
+
+      &::placeholder {
+        color: lighten(#e76f51, 20%);
+      }
     }
   }
 
@@ -51,17 +68,53 @@
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     margin-top: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 
     &:hover {
       background-color: darken(#d4a373, 8%);
       transform: translateY(-2px);
+      box-shadow: 0 5px 10px rgba(0,0,0,0.15);
     }
 
     &:active {
       transform: translateY(0);
       background-color: darken(#d4a373, 12%);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    &.error-state {
+      background-color: #e76f51;
+
+      &:hover {
+        background-color: darken(#e76f51, 8%);
+      }
     }
   }
+
+  .error-message {
+    position: absolute;
+    bottom: -25px;
+    left: 20px;
+    color: #e76f51;
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(5px);
+    transition: all 0.3s ease;
+
+    &.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+@keyframes gentleShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
 }
 
 .quiz {
