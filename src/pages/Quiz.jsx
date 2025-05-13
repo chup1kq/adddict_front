@@ -62,7 +62,16 @@ export const Quiz = () => {
     const question = dictionary[step];
 
     const onClickVariant = (word) => {
-        if (question.translate.toLowerCase() === word.toLowerCase()) {
+        const normalizeString = (str) => {
+            return str
+                .toLowerCase()
+                .trim()
+                .replace(/\s+/g, ' ')
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "");
+        };
+
+        if (normalizeString(question.translate) === normalizeString(word)) {
             setCorrect(correct + 1);
         } else {
             setIncorrectWords([...incorrectWords, question]);
