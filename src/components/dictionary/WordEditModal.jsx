@@ -13,22 +13,28 @@ export const WordEditModal = ({
                                   cancelText = "Отмена",
                                   saveText = "Сохранить",
                                   initialOriginal = "",
-                                  initialTranslation = ""
+                                  initialTranslation = "",
+                                  showCheckbox = false,
+                                  checkboxLabel = "Дополнительная опция",
+                                  initialChecked = false
                               }) => {
     const [original, setOriginal] = useState(initialOriginal);
     const [translation, setTranslation] = useState(initialTranslation);
+    const [checked, setChecked] = useState(initialChecked);
 
     useEffect(() => {
         if (show) {
             setOriginal(initialOriginal);
             setTranslation(initialTranslation);
+            setChecked(initialChecked);
         }
-    }, [show, initialOriginal, initialTranslation]);
+    }, [show, initialOriginal, initialTranslation, initialChecked]);
 
     const handleSave = () => {
         onSave({
             original: original.trim(),
-            translation: translation.trim()
+            translation: translation.trim(),
+            ...(showCheckbox && { checked })
         });
     };
 
@@ -47,7 +53,7 @@ export const WordEditModal = ({
                         placeholder="Введите слово"
                     />
                 </Form.Group>
-                <Form.Group>
+                <Form.Group className="mb-3">
                     <Form.Label>{translationLabel}</Form.Label>
                     <Form.Control
                         type="text"
@@ -56,6 +62,16 @@ export const WordEditModal = ({
                         placeholder="Введите перевод"
                     />
                 </Form.Group>
+                {showCheckbox && (
+                    <Form.Group className="mb-3">
+                        <Form.Check
+                            type="checkbox"
+                            label={checkboxLabel}
+                            checked={checked}
+                            onChange={(e) => setChecked(e.target.checked)}
+                        />
+                    </Form.Group>
+                )}
             </Modal.Body>
             <Modal.Footer className="word-edit-footer">
                 <Button
@@ -88,5 +104,8 @@ WordEditModal.propTypes = {
     cancelText: PropTypes.string,
     saveText: PropTypes.string,
     initialOriginal: PropTypes.string,
-    initialTranslation: PropTypes.string
+    initialTranslation: PropTypes.string,
+    showCheckbox: PropTypes.bool,
+    checkboxLabel: PropTypes.string,
+    initialChecked: PropTypes.bool
 };
