@@ -6,33 +6,37 @@ const dictionaries = {
     your: [
         {
             id: 1,
-            title: 'Животные',
+            name: 'Животные',
             description: 'словарь для животных',
-            is_published: false,
-            created_at: 1686825045000,
+            isPublic: false,
+            createdAt: 1686825045000,
+            authorId: 1,
         },
         {
             id: 2,
-            title: 'Блюда',
+            name: 'Блюда',
             description: 'Японская кухня',
-            is_published: true,
-            created_at: 1686826045000,
+            isPublic: true,
+            createdAt: 1686826045000,
+            authorId: 1,
         },
         {
             id: 3,
-            title: 'просто словарь',
+            name: 'просто словарь',
             description: '',
-            is_published: false,
-            created_at: 1646826045000,
+            isPublic: false,
+            createdAt: 1646826045000,
+            authorId: 1,
         },
     ],
     strangers: [
         {
             id: 4,
-            title: 'Древесина',
+            name: 'Древесина',
             description: 'справочник для лесоруба',
-            is_published: true,
-            created_at: 1686826005000,
+            isPublic: true,
+            createdAt: 1686826005000,
+            authorId: 2,
         }
     ]
 };

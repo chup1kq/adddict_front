@@ -4,6 +4,8 @@ import { useAuth } from '../context/AuthContext';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
 import { WordEditModal } from '../components/dictionary/WordEditModal';
+import { Button } from "../components/Button";
+// import { dictionaryApi } from '../api/dictionaryApi';
 import "../static/styles/WordCard.css";
 
 export const Dictionary = () => {
@@ -11,10 +13,12 @@ export const Dictionary = () => {
     const { user } = useAuth();
     const [dictionary, setDictionary] = useState(null);
     const [words, setWords] = useState([]);
+    const [page, setPage] = useState(0);
+    const [hasMore, setHasMore] = useState(true);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [showDeleteWindow, setShowDeleteWindow] = useState(false);
-    const [wordToDeleteId, setWordToDeleteId] = useState(null); // Только ID
-
+    const [wordToDeleteId, setWordToDeleteId] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentWord, setCurrentWord] = useState(null);
 
@@ -22,23 +26,60 @@ export const Dictionary = () => {
 
     useEffect(() => {
         const fetchDictionary = async () => {
-            const testDictionary = {
-                id: id,
-                title: `Животные`,
-                description: 'словарь для животных',
-                words: [
+            setIsLoading(true);
+            try {
+                // Тестовые данные вместо API запроса
+                const dictData = {
+                    id: parseInt(id),
+                    name: `Словарь животных`,
+                    description: 'Тестовый словарь с животными',
+                    isPublic: true,
+                    createdAt: "2025-05-10T01:02:05.617498",
+                    authorId: 1,
+                };
+                setDictionary(dictData);
+
+                // Тестовые данные слов (первая страница)
+                const testWords = [
                     { id: 1, original: 'Pandas', translation: 'Панды' },
                     { id: 2, original: 'elephant', translation: 'СЛОН' },
                     { id: 3, original: 'GiRaFfE', translation: 'жираф' },
                     { id: 4, original: 'cat', translation: 'кот' },
                     { id: 5, original: 'mouse', translation: 'мышь' },
-                ]
-            };
-            setDictionary(testDictionary);
-            setWords(testDictionary.words);
+                ];
+                setWords(testWords);
+                setHasMore(true); // Предполагаем, что есть еще данные
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+            } finally {
+                setIsLoading(false);
+            }
         };
         fetchDictionary();
     }, [id]);
+
+    const loadMoreWords = async () => {
+        if (isLoading || !hasMore) return;
+        setIsLoading(true);
+        try {
+            // Тестовые данные для второй страницы
+            const nextTestWords = [
+                { id: 6, original: 'dog', translation: 'собака' },
+                { id: 7, original: 'bird', translation: 'птица' },
+                { id: 8, original: 'fish', translation: 'рыба' },
+            ];
+
+            setTimeout(() => { // Имитация задержки запроса
+                setWords(prev => [...prev, ...nextTestWords]);
+                setPage(prev => prev + 1);
+                setHasMore(false); // Предполагаем, что это последняя страница
+                setIsLoading(false);
+            }, 500);
+        } catch (error) {
+            console.error('Ошибка загрузки:', error);
+            setIsLoading(false);
+        }
+    };
 
     const handleEditClick = (word) => {
         setCurrentWord(word);
@@ -50,22 +91,26 @@ export const Dictionary = () => {
         setShowEditModal(true);
     };
 
-    const handleSaveWord = ({ original, translation }) => {
-        if (currentWord?.id) {
-            // Здесь будет запрос на backend
-            console.log('Обновление слова:', currentWord.id, original, translation);
-            // Только после успешного ответа от сервера обновляем состояние
-            // (пока тут для теста функционала)
-            setWords(words.map(w => w.id === currentWord.id ? {...w, original, translation} : w));
-        } else {
-            // Здесь будет запрос на backend
-            console.log('Добавление слова:', original, translation);
-            // Только после успешного ответа от сервера добавляем новое слово
-            // (пока тут для теста функционала)
-            setWords([...words, {id: 6, original, translation}]);
+    const handleSaveWord = async ({ original, translation }) => {
+        try {
+            if (currentWord?.id) {
+                // Тестовая логика обновления вместо API
+                console.log('Обновление слова:', currentWord.id, original, translation);
+                setWords(words.map(w =>
+                    w.id === currentWord.id ? { ...w, original, translation } : w
+                ));
+            } else {
+                // Тестовая логика добавления вместо API
+                console.log('Добавление слова:', original, translation);
+                const newId = Math.max(...words.map(w => w.id), 0) + 1;
+                setWords([{ id: newId, original, translation }, ...words]);
+            }
+            setShowEditModal(false);
+            setCurrentWord(null);
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
+            alert('Произошла ошибка при сохранении');
         }
-        setShowEditModal(false);
-        setCurrentWord(null); // Сбрасываем текущее слово
     };
 
     const handleCancelEdit = () => {
@@ -78,10 +123,16 @@ export const Dictionary = () => {
         setShowDeleteWindow(true);
     };
 
-    const handleConfirmDelete = () => {
-        // запрос на backend с удалением
-        console.log('Удаление слова с ID:', wordToDelete.id);
-        setShowDeleteWindow(false);
+    const handleConfirmDelete = async () => {
+        try {
+            // Тестовая логика удаления вместо API
+            console.log('Удаление слова с ID:', wordToDelete.id);
+            setWords(words.filter(w => w.id !== wordToDelete.id));
+            setShowDeleteWindow(false);
+        } catch (error) {
+            console.error('Ошибка удаления:', error);
+            alert('Произошла ошибка при удалении');
+        }
     };
 
     if (!dictionary) return <div>Загрузка...</div>;
@@ -91,7 +142,7 @@ export const Dictionary = () => {
             <div className="container px-3 px-md-5 my-4">
                 <div className="card mb-4">
                     <div className="card-body">
-                        <h2 className="mb-3">{dictionary.title}</h2>
+                        <h2 className="mb-3">{dictionary.name}</h2>
                         <p className="text-muted mb-3">{dictionary.description}</p>
                         {user && (
                             <button
@@ -100,7 +151,6 @@ export const Dictionary = () => {
                             >
                                 Добавить слово
                             </button>
-
                         )}
                     </div>
                 </div>
@@ -109,9 +159,7 @@ export const Dictionary = () => {
                     {words.map(word => (
                         <div key={word.id} className="col">
                             <div className="card h-100 border-0 shadow-sm position-relative">
-                                <div className="card-body p-3" style={{
-                                    background: '#f8f9fa',
-                                }}>
+                                <div className="card-body p-3" style={{ background: '#f8f9fa' }}>
                                     <div className="d-flex flex-column">
                                         <span className="fw-bold text-break mb-2">{word.original}</span>
                                         <span className="text-muted text-break">{word.translation}</span>
@@ -137,6 +185,19 @@ export const Dictionary = () => {
                         </div>
                     ))}
                 </div>
+
+                {hasMore && (
+                    <div className="text-center mt-4">
+                        <Button
+                            text={"Загрузить еще"}
+                            onClick={loadMoreWords}
+                            disabled={isLoading}
+                            className={"btn btn-outline-primary"}
+                        >
+                            {isLoading ? 'Загрузка...' : 'Загрузить еще'}
+                        </Button>
+                    </div>
+                )}
             </div>
 
             {wordToDelete && (
@@ -151,6 +212,7 @@ export const Dictionary = () => {
                     confirmVariant="danger"
                 />
             )}
+
             <WordEditModal
                 show={showEditModal}
                 onCancel={handleCancelEdit}

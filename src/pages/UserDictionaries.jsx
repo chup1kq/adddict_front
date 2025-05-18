@@ -43,7 +43,7 @@ export const UserDictionaries = ({dictionaries}) => {
                                             className="dropdown-item"
                                             onClick={(e) => e.stopPropagation()}
                                         >
-                                            {dict.is_published ? 'Сделать приватным' : 'Опубликовать'}
+                                            {dict.isPublic ? 'Сделать приватным' : 'Опубликовать'}
                                         </button>
                                     </li>
                                     <li><hr className="dropdown-divider" /></li>
@@ -65,10 +65,10 @@ export const UserDictionaries = ({dictionaries}) => {
                                         wordWrap: 'break-word',
                                         whiteSpace: 'normal'
                                     }}>
-                                        {dict.title}
+                                        {dict.name}
                                     </h5>
-                                    <span className={`badge ${dict.is_published ? 'bg-success' : 'bg-secondary'}`}>
-                                        {dict.is_published ? <FaLockOpen /> : <FaLock />}
+                                    <span className={`badge ${dict.isPublic ? 'bg-success' : 'bg-secondary'}`}>
+                                        {dict.isPublic ? <FaLockOpen /> : <FaLock />}
                                     </span>
                                 </div>
                                 <p className="card-text">
@@ -86,7 +86,7 @@ export const UserDictionaries = ({dictionaries}) => {
                                     </button>
                                     <div className="d-flex flex-column text-end">
                                         <span className="small text-muted">Создан:</span>
-                                        <span className="small">{convertDate(dict.created_at)}</span>
+                                        <span className="small">{convertDate(dict.createdAt)}</span>
                                     </div>
                                 </div>
                             </div>
