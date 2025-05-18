@@ -39,3 +39,30 @@
 .word-edit-cancel:hover {
     background-color: #f8f9fa;
 }
+
+.word-edit-body .form-check-input:checked {
+    background-color: #d4a373;
+    border-color: #d4a373;
+}
+
+.word-edit-body .form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(212, 163, 115, 0.25);
+    border-color: #d4a373;
+}
+
+.word-edit-body .form-check-label {
+    margin-left: 0.5em;
+    color: #495057;
+}
+
+/* Контейнер чекбокса */
+.word-edit-body .form-check {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Анимация для чекбокса */
+.word-edit-body .form-check-input {
+    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
