@@ -9,7 +9,9 @@ export const WordEditModal = ({
                                   onSave,
                                   title = "Редактирование слова",
                                   originalLabel = "Слово",
+                                  originalPlaceholder = "Введите слово",
                                   translationLabel = "Перевод",
+                                  translationPlaceholder = "Введите перевод",
                                   cancelText = "Отмена",
                                   saveText = "Сохранить",
                                   initialOriginal = "",
@@ -50,7 +52,7 @@ export const WordEditModal = ({
                         type="text"
                         value={original}
                         onChange={(e) => setOriginal(e.target.value)}
-                        placeholder="Введите слово"
+                        placeholder={originalPlaceholder}
                     />
                 </Form.Group>
                 <Form.Group className="mb-3">
@@ -59,7 +61,7 @@ export const WordEditModal = ({
                         type="text"
                         value={translation}
                         onChange={(e) => setTranslation(e.target.value)}
-                        placeholder="Введите перевод"
+                        placeholder={translationPlaceholder}
                     />
                 </Form.Group>
                 {showCheckbox && (
@@ -101,6 +103,8 @@ WordEditModal.propTypes = {
     title: PropTypes.string,
     originalLabel: PropTypes.string,
     translationLabel: PropTypes.string,
+    originalPlaceholder: PropTypes.string,
+    translationPlaceholder: PropTypes.string,
     cancelText: PropTypes.string,
     saveText: PropTypes.string,
     initialOriginal: PropTypes.string,

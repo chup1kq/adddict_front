@@ -54,7 +54,7 @@ export const UserDictionaries = ({ dictionaries }) => {
 
     return (
         <>
-            <div className="container px-5 my-5">
+            <div className="container px-5">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     {dictionaries.map((dict) => (
                         <div className="col" key={dict.id}>
@@ -155,7 +155,9 @@ export const UserDictionaries = ({ dictionaries }) => {
                     onSave={handleSaveDictionary}
                     title="Редактирование словаря"
                     originalLabel="Название"
+                    originalPlaceholder="Введите название словаря"
                     translationLabel="Описание"
+                    translationPlaceholder="Введите описание словаря"
                     initialOriginal={currentDictionary.name}
                     initialTranslation={currentDictionary.description || ''}
                     showCheckbox={true}

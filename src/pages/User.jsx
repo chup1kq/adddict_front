@@ -1,6 +1,7 @@
 import { UserDictionaries } from "./UserDictionaries";
 import { useState, useRef, useEffect } from 'react';
-import {useAuth} from "../context/AuthContext";
+import { useAuth } from "../context/AuthContext";
+import { WordEditModal } from "../components/dictionary/WordEditModal";
 
 const dictionaries = {
     your: [
@@ -48,6 +49,7 @@ export const User = () => {
         width: 0,
         left: 0
     });
+    const [showAddDictionaryModal, setShowAddDictionaryModal] = useState(false);
 
     const dictionariesRef = useRef(null);
     const subscriptionsRef = useRef(null);
@@ -78,6 +80,16 @@ export const User = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [activeTab]);
+
+    const handleAddDictionary = ({ original, translation, checked }) => {
+        console.log('Создание нового словаря:', {
+            name: original,
+            description: translation,
+            isPublic: !checked
+        });
+        // Здесь должна быть логика создания словаря через API
+        setShowAddDictionaryModal(false);
+    };
 
     return (
         <div className={'container-fluid'}>
@@ -124,6 +136,16 @@ export const User = () => {
                     </div>
                 </div>
             </div>
+            <div className="container px-5 py-4">
+                {activeTab === 'dictionaries' && (
+                    <button
+                        className="btn custom-outline-btn"
+                        onClick={() => setShowAddDictionaryModal(true)}
+                    >
+                        Добавить словарь
+                    </button>
+                )}
+            </div>
             <div className="row mt-3">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
@@ -131,6 +153,23 @@ export const User = () => {
                         <UserDictionaries dictionaries={dictionaries.strangers} />}
                 </div>
             </div>
+
+            {/* Модальное окно добавления словаря */}
+            <WordEditModal
+                show={showAddDictionaryModal}
+                onCancel={() => setShowAddDictionaryModal(false)}
+                onSave={handleAddDictionary}
+                title="Создание нового словаря"
+                originalLabel="Название словаря"
+                originalPlaceholder="Введите название словаря"
+                translationLabel="Описание"
+                translationPlaceholder="Введите описание словаря"
+                cancelText="Отмена"
+                saveText="Создать"
+                showCheckbox={true}
+                checkboxLabel="Приватный словарь"
+                initialChecked={false}
+            />
         </div>
     );
 };
