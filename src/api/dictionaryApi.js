@@ -1,49 +1,82 @@
-const API_BASE_URL = 'http://localhost:8080/api/v1/dictionaries';
+const DICTIONARY_API_BASE_URL = 'http://localhost:8080/api/v1/dictionaries';
 
 export const dictionaryApi = {
-    async getDictionary(id, page = 0) {
-        const response = await fetch(`${API_BASE_URL}/${id}/words?page=${page}`);
+    async getDictionaries(page = 0, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list?page=${page}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке списка словарей');
+        }
+        return await response.json();
+    },
+
+    async getSubscribedDictionaries(token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/subscribed`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке подписанных словарей');
+        }
+        return await response.json();
+    },
+
+    async createDictionary(dictionaryData, token) {
+        const response = await fetch(DICTIONARY_API_BASE_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(dictionaryData),
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при создании словаря');
+        }
+        return await response.json();
+    },
+
+    async getDictionary(id, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
         if (!response.ok) {
             throw new Error('Ошибка при загрузке словаря');
         }
         return await response.json();
     },
 
-    async addWord(dictionaryId, wordData) {
-        const response = await fetch(`${API_BASE_URL}/${dictionaryId}/words`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(wordData),
-        });
-        if (!response.ok) {
-            throw new Error('Ошибка при добавлении слова');
-        }
-        return await response.json();
-    },
-
-    async updateWord(dictionaryId, wordId, wordData) {
-        const response = await fetch(`${API_BASE_URL}/${dictionaryId}/words/${wordId}`, {
+    async updateDictionary(id, dictionaryData, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/${id}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
-            body: JSON.stringify(wordData),
+            body: JSON.stringify(dictionaryData),
         });
         if (!response.ok) {
-            throw new Error('Ошибка при обновлении слова');
+            throw new Error('Ошибка при обновлении словаря');
         }
         return await response.json();
     },
 
-    async deleteWord(dictionaryId, wordId) {
-        const response = await fetch(`${API_BASE_URL}/${dictionaryId}/words/${wordId}`, {
+    async deleteDictionary(id, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/${id}`, {
             method: 'DELETE',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
         if (!response.ok) {
-            throw new Error('Ошибка при удалении слова');
+            throw new Error('Ошибка при удалении словаря');
         }
         return response.ok;
     }
-};
+}
