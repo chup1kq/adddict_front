@@ -4,6 +4,7 @@ import "../static/styles/CardDictionary.css";
 import { useState } from 'react';
 import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
 import { WordEditModal } from '../components/dictionary/WordEditModal';
+import { dictionaryApi } from '../api/dictionaryApi';
 
 export const UserDictionaries = ({ dictionaries }) => {
     const navigate = useNavigate();
@@ -13,6 +14,8 @@ export const UserDictionaries = ({ dictionaries }) => {
     const [dictionaryToDelete, setDictionaryToDelete] = useState(null);
 
     const handleDictionaryClick = (dictId) => {
+        // тестовый рабочий запрос на localhost:8080
+        console.log(dictionaryApi.getDictionary(3, localStorage.getItem("token")));
         navigate(`/dictionaries/${dictId}`);
     };
 
