@@ -6,6 +6,8 @@ import {Button} from "./Button";
 import {PasswordInput} from './PasswordInput';
 import {useAuth} from "../context/AuthContext";
 
+const apiUrl = "http://localhost:8081/api/v1";
+
 export function Login() {
     const {setToken, setUser} = useAuth();
     const [login, setLogin] = useState(
@@ -15,18 +17,46 @@ export function Login() {
     const [errors, setErrors] = useState([]);
     const navigate = useNavigate();
 
-    function handleLogin() {
+    async function handleLogin() {
         setErrors([]);
+
         if (!(login && password)) {
             setErrors([ValidationError.EMPTY_FIELD]);
             return;
         }
 
-        // setToken('Rio');
-        // setUser(login);
+        try {
+            const response = await fetch(`${apiUrl}/auth/login`, {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    login,
+                    password,
+                }),
+            });
 
-        // Запрос на сервер...
-        navigate("/");
+            if (!response.ok) {
+                //TODO check http status
+                setErrors([ValidationError.INVALID_CREDENTIALS]);
+                return;
+            }
+
+            const data = await response.text();
+
+            // Сохраняем токен и данные пользователя в контексте
+            setToken(data);
+            setUser(login);
+
+            // Перенаправляем на главную страницу
+            navigate("/");
+
+        } catch (error) {
+            setErrors([{
+                message: error.message || "Неизвестная ошибка при входе"
+            }]);
+        }
     }
 
     useEffect(() => {

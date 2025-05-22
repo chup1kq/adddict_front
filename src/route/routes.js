@@ -4,41 +4,45 @@ import {User} from "../pages/User";
 import {Registration} from "../components/Registration";
 import {Login} from "../components/Login";
 import {Dictionary} from "../pages/Dictionary"
+import {useAuth} from "../context/AuthContext";
+import {useRoutes} from "react-router-dom";
+import {Quiz} from "../pages/Quiz";
 
-export const routes = [
-    {
-        path: '*',
-        element: <NotFound />,
-        name: '404',
-    },
-    {
-        path: '/',
-        element: '',
-        name: 'main',
-    },
-    {
-        path: '/registration',
-        element: <Registration />,
-        name: 'Sign in',
-    },
-    {
-        path: '/login',
-        element: <Login />,
-        name: 'Login',
-    },
-    {
-        path: '/dictionaries',
-        element: <UserDictionaries />,
-        name: 'dictionaries',
-    },
-    {
-        path: '/account',
-        element: <User />,
-        name: 'User profile',
-    },
-    {
-        path: '/dictionaries/:id',
-        element: <Dictionary />,
-        name: 'Dictionary details',
-    },
-]
+export const AppRoutes = () => {
+    const {token} = useAuth();
+
+    return useRoutes([
+        {
+            path: '*',
+            element: <NotFound/>,
+        },
+        {
+            path: '/',
+            element: '',
+        },
+        {
+            path: '/registration',
+            element: <Registration/>,
+        },
+        {
+            path: '/login',
+            element: token ? <UserDictionaries/> : <Login/>,
+        },
+        {
+            path: '/dictionaries',
+            element: token ? <UserDictionaries/> : <Login/>,
+        },
+        {
+            path: '/account',
+            element: <User/>,
+        },
+        {
+            path: '/quiz/:type/:url',
+            element: <Quiz />,
+        },
+        {
+            path: '/dictionaries/:id',
+            element: <Dictionary />,
+        }
+    ]);
+}

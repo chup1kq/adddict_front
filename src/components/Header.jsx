@@ -1,10 +1,11 @@
 import {useAuth} from "../context/AuthContext";
 import {BsFillPersonFill} from "react-icons/bs";
+import { MdLogout } from "react-icons/md";
 import "../static/styles/Header.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min';
 
 export const Header = () => {
-    const {token, user} = useAuth();
+    const {token, user, setUser, setToken} = useAuth();
 
     return (
         <nav className="navbar navbar-expand-sm navbar-light bg-light px-5">
@@ -33,17 +34,39 @@ export const Header = () => {
                         )}
                     </ul>
                     <div className="d-flex align-items-center">
-                        <BsFillPersonFill className="me-2"/>
+                        <BsFillPersonFill className="me-2" size={'24px'}/>
                         {!token ? (
                             <>
-                                <a href="/login" className="auth me-2">Войти</a>
+                                <a href="/login"
+                                   className="auth me-2"
+                                >
+                                    Войти
+                                </a>
                                 <span className="me-2">/</span>
-                                <a href="/registration" className="auth">Зарегистрироваться</a>
+                                <a href="/registration"
+                                   className="auth"
+                                >
+                                    Зарегистрироваться
+                                </a>
                             </>
                         ) : (
-                            <a href={'/account'}>
-                                {user}
-                            </a>
+                            <div className="d-flex align-items-center">
+                                <a href={'/account'}
+                                   className="auth me-2"
+                                   style={{fontSize:'24px'}}
+                                >
+                                    {user}
+                                </a>
+                                <a href={'/login'}
+                                   onClick={() => {
+                                       setUser(null);
+                                       setToken(null);
+                                   }}
+                                   className="auth"
+                                >
+                                    <MdLogout className="m-auto" size={'24px'}/>
+                                </a>
+                            </div>
                         )}
                     </div>
                 </div>
