@@ -181,8 +181,8 @@ export const User = () => {
             <div className="row mt-3 mb-4">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
-                        <UserDictionaries dictionaries={dictionaries.your} isMine={true}/> :
-                        <UserDictionaries dictionaries={dictionaries.strangers} isMine={false}/>}
+                        <UserDictionaries dictionaries={myDictionaries} isMine={true}/> :
+                        <UserDictionaries dictionaries={subscribedDictionaries} isMine={false}/>}
                 </div>
             </div>
 
