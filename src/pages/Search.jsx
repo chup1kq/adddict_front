@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import '../static/styles/Search.css';
 import { userApi } from '../api/userApi';
+import { dictionaryApi } from '../api/dictionaryApi';
 import { useAuth } from "../context/AuthContext";
+import {UserDictionaries} from "./UserDictionaries";
 
 export const Search = () => {
     const { user } = useAuth(); // Получаем токен из контекста
     const [login, setLogin] = useState('');
     const [loginToPrint, setLoginToPrint] = useState('');
     const [error, setError] = useState('');
+    const [dictionaries, setDictionaries] = useState([]);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -17,8 +20,13 @@ export const Search = () => {
             const exists = await userApi.hasUser(login);
             if (exists) {
                 setLoginToPrint(login);
+                const userData = await userApi.getUserByLogin(login);
+                console.log(userData);
+                const data = await dictionaryApi.getPublicDictionaries(userData.id);
+                setDictionaries(data.page.content);
             } else {
                 setLoginToPrint('');
+                setDictionaries([]);
                 setError('Пользователь не найден');
             }
         } catch (err) {
@@ -50,6 +58,15 @@ export const Search = () => {
                 {error && (
                     <span className="text-danger text-center fw-semibold">{error}</span>
                 )}
+            </div>
+
+            <div className="row mt-3 mb-4">
+                <div className="col-12">
+                    <UserDictionaries
+                        dictionaries={dictionaries}
+                        isMine={false}
+                    />
+                </div>
             </div>
         </div>
     );
