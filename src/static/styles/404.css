@@ -1,0 +1,20 @@
+
+
+.not-found {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.not-found h1 {
+    font-size: 20vw;
+    color: grey;
+}
+
+.not-found-info {
+    display: flex;
+    align-items: center;
+}
+
+.not-found-info p {
+    width: 50%;
+}

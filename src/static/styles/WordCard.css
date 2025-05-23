@@ -1,0 +1,9 @@
+.btn-word:active {
+    color: #9a6b4a !important;
+    transform: scale(0.95);
+}
+
+/* Убираем стандартные стили фокуса */
+.btn-word:focus {
+    box-shadow: none !important;
+}

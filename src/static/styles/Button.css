@@ -1,0 +1,16 @@
+.btn.custom-outline-btn{
+    border-color: #d4a373;
+    background-color: #d4a373;
+    color: white;
+    --bs-btn-hover-bg: #d4a373;
+    --bs-btn-hover-border-color: #d4a373;
+    --bs-btn-active-bg: #d4a373;
+    --bs-btn-active-border-color: #d4a373;
+    --bs-btn-focus-shadow-rgb: 212, 163, 115;
+    --bs-btn-hover-color: white;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.btn.custom-outline-btn:hover {
+    background-color: #9d7248;
+}

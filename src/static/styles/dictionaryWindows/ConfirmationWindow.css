@@ -1,0 +1,109 @@
+/* Основные стили модального окна */
+.confirmation-modal {
+    border: 1px solid #d4a373;
+    border-radius: 8px;
+}
+
+.confirmation-header {
+    background-color: #fcdeb3;
+    border-bottom: 1px solid #f8edeb;
+    padding: 1rem 1.5rem;
+}
+
+.confirmation-header .close {
+    margin: -1rem -1rem -1rem auto;
+}
+
+.confirmation-body {
+    padding: 1.5rem;
+    font-size: 1rem;
+    color: #495057;
+}
+
+.confirmation-footer {
+    border-top: 1px solid #f8edeb;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* Базовые стили кнопок */
+.confirmation-button {
+    padding: 0.5rem 1.25rem;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.confirmation-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-button:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+/* Стили для кнопки подтверждения */
+.confirm-button.neutral {
+    background-color: #d4a373;
+    color: white;
+}
+
+.confirm-button.neutral:hover {
+    background-color: #c1915e;
+}
+
+.confirm-button.neutral:active {
+    background-color: #ad7f4f;
+}
+
+.confirm-button.danger {
+    background-color: #dc3545;
+    border-color: #c82333;
+    color: white;
+}
+
+.confirm-button.danger:hover {
+    background-color: #c82333;
+    border-color: #c82333;
+}
+
+.confirm-button.danger:active {
+    background-color: #bd2130;
+}
+
+/* Стили для кнопки отмены */
+.cancel-button.outline {
+    background-color: transparent;
+    color: #6c757d;
+    border-color: #d4a373;
+}
+
+.cancel-button.outline:hover {
+    background-color: #f8f9fa;
+    border-color: #5a6268;
+    color: #5a6268;
+}
+
+.cancel-button.outline:active {
+    background-color: #e2e6ea;
+}
+
+.cancel-button.filled {
+    background-color: #f8edeb;
+    color: #d4a373;
+    border-color: #f8edeb;
+}
+
+.cancel-button.filled:hover {
+    background-color: #f0e0d8;
+    color: #c1915e;
+}
+
+.cancel-button.filled:active {
+    background-color: #e8d4c9;
+}
