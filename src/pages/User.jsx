@@ -4,45 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { WordEditModal } from "../components/dictionary/WordEditModal";
 import { dictionaryApi } from "../api/dictionaryApi";
 
-const dictionaries = {
-    your: [
-        {
-            id: 1,
-            name: 'Животные',
-            description: 'словарь для животных',
-            isPublic: false,
-            createdAt: 1686825045000,
-            authorId: 1,
-        },
-        {
-            id: 2,
-            name: 'Блюда',
-            description: 'Японская кухня',
-            isPublic: true,
-            createdAt: 1686826045000,
-            authorId: 1,
-        },
-        {
-            id: 3,
-            name: 'просто словарь',
-            description: '',
-            isPublic: false,
-            createdAt: 1646826045000,
-            authorId: 1,
-        },
-    ],
-    strangers: [
-        {
-            id: 4,
-            name: 'Древесина',
-            description: 'справочник для лесоруба',
-            isPublic: true,
-            createdAt: 1686826005000,
-            authorId: 2,
-        }
-    ]
-};
-
 export const User = () => {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('dictionaries');
