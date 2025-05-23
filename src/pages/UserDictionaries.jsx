@@ -14,6 +14,7 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
     const [dictionaryForAction, setDictionaryForAction] = useState(null); // Объединяем в одно состояние
     const [actionType, setActionType] = useState(null); // 'delete' или 'unsubscribe'
     const [openDropdownId, setOpenDropdownId] = useState(null);
+    const [selectedDictionaries, setSelectedDictionaries] = useState([]);
 
 
     const handleDictionaryClick = async (dictionaryId) => {
@@ -101,8 +102,31 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
         setCurrentDictionary(null);
     };
 
+    const toggleSelectDictionary = (id) => {
+        setSelectedDictionaries((prev) =>
+            prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
+        );
+    };
+
+
     return (
         <>
+            {selectedDictionaries.length > 0 && (
+                <div className="d-flex justify-content-center my-3">
+                    <button
+                        className="btn mx-2 custom-train-btn"
+                        onClick={() => navigate(`/quiz/txt?ids=${selectedDictionaries.join(',')}`)}
+                    >
+                        Начать обычную тренировку
+                    </button>
+                    <button
+                        className="btn btn-secondary mx-2"
+                        onClick={() => navigate(`/quiz/var?ids=${selectedDictionaries.join(',')}`)}
+                    >
+                        Начать квиз
+                    </button>
+                </div>
+            )}
             <div className="container px-5">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     {dictionaries.map((dict) => (
@@ -155,7 +179,6 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
                                         )}
                                     </ul>
                                 </div>
-
                                 <div className="card-body">
                                     <div className="d-flex align-items-center mb-3">
                                         <h5 className="card-title mb-0 me-2" style={{
@@ -168,6 +191,15 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
                                         <span className={`badge ${dict.isPublic ? 'bg-success' : 'bg-secondary'}`}>
                                             {dict.isPublic ? <FaLockOpen/> : <FaLock/>}
                                         </span>
+                                        <div className="form-check top-0 start-0 m-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                checked={selectedDictionaries.includes(dict.id)}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={() => toggleSelectDictionary(dict.id)}
+                                            />
+                                        </div>
                                     </div>
                                     <p className="card-text">
                                         {dict.description || <span className="text-muted">Описание отсутствует</span>}
