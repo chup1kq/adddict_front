@@ -51,6 +51,8 @@ export const User = () => {
         left: 0
     });
     const [showAddDictionaryModal, setShowAddDictionaryModal] = useState(false);
+    const [myDictionaries, setMyDictionaries] = useState([]);
+    const [subscribedDictionaries, setSubscribedDictionaries] = useState([]);
 
     const dictionariesRef = useRef(null);
     const subscriptionsRef = useRef(null);
@@ -81,6 +83,32 @@ export const User = () => {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [activeTab]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+
+        const fetchDictionaries = async () => {
+            try {
+                const myData = await dictionaryApi.getMyDictionaries(0, token);
+                // const subData = await dictionaryApi.getSubscribedDictionaries(token);
+
+                setMyDictionaries(myData.page.content);
+                // setSubscribedDictionaries(subData.page.content);
+
+                console.log("Your Dictionaries:", myDictionaries);
+                console.log(myData.page.content);
+                // console.log("Subscribed Dictionaries:", subscribedDictionaries);
+
+            } catch (error) {
+                console.error("Ошибка при загрузке словарей:", error);
+            }
+        };
+
+        if (user) {
+            fetchDictionaries();
+        }
+    }, [user]);
+
 
     const handleAddDictionary = ({ original, translation, checked }) => {
         const dictToAdd = {
