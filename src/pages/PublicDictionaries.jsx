@@ -63,7 +63,7 @@ export const PublicDictionaries = ({dictionaries, isMine, userLogin}) => {
                                     <p className="card-text">
                                         {dict.description || <span className="text-muted">Описание отсутствует</span>}
                                     </p>
-                                    // перенес сюда
+                                    {/*перенес сюда*/}
                                     <div className="d-flex flex-column text-end">
                                         <span className="small text-muted">Создан:</span>
                                         <span className="small">{convertDate(dict.createdAt)}</span>
