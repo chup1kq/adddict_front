@@ -5,6 +5,7 @@ import {useState} from 'react';
 import {ConfirmationWindow} from '../components/dictionary/ConfirmationWindow';
 import {WordEditModal} from '../components/dictionary/WordEditModal';
 import {dictionaryApi} from '../api/dictionaryApi';
+import {subscriptionAPI} from "../api/subscriptionApi";
 
 export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdateDictionary}) => {
     const navigate = useNavigate();
@@ -59,24 +60,34 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
     };
 
     const handleConfirmAction = async () => {
-        if (actionType === 'delete') {
-            try {
-                await dictionaryApi.deleteDictionary(dictionaryForAction.id, localStorage.getItem("token"));
+        const token = localStorage.getItem("token");
+
+        try {
+            if (actionType === 'delete') {
+                await dictionaryApi.deleteDictionary(dictionaryForAction.id, token);
                 console.log('Словарь удалён:', dictionaryForAction.id);
-                if (isMine) {
-                    setDictionaries(prev =>
-                        prev.filter(dict => dict.id !== dictionaryForAction.id)
-                    );
-                }
-            } catch (error) {
-                console.error('Ошибка при удалении словаря:', error);
-                alert('Не удалось удалить словарь.');
+            } else if (actionType === 'unsubscribe') {
+                await subscriptionAPI.unsubscribeFromDictionaryById(dictionaryForAction.id, token);
+                console.log('Отписка от словаря:', dictionaryForAction.id);
             }
+
+            // Всегда удаляем из списка
+            const idToRemove = dictionaryForAction?.id;
+            setDictionaries(prev => prev.filter(dict => dict.id !== idToRemove));
+        } catch (error) {
+            console.error('Ошибка при выполнении действия над словарём:', error);
+            alert(actionType === 'delete'
+                ? 'Не удалось удалить словарь.'
+                : 'Не удалось отписаться от словаря.'
+            );
         }
+
+        // Очистка состояния
         setShowConfirmModal(false);
         setDictionaryForAction(null);
         setActionType(null);
     };
+
 
     const handleSaveDictionary = async ({original, translation, checked}) => {
         try {

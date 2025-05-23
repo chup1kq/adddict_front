@@ -154,6 +154,7 @@ export const User = () => {
                         <UserDictionaries
                             dictionaries={subscribedDictionaries}
                             isMine={false}
+                            setDictionaries={setSubscribedDictionaries}
                         />
                     }
                 </div>
