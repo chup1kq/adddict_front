@@ -3,14 +3,15 @@ import '../static/styles/Search.css';
 import { userApi } from '../api/userApi';
 import { dictionaryApi } from '../api/dictionaryApi';
 import { useAuth } from "../context/AuthContext";
-import {UserDictionaries} from "./UserDictionaries";
+import { UserDictionaries } from "./UserDictionaries";
 
 export const Search = () => {
-    const { user } = useAuth(); // Получаем токен из контекста
+    const { user } = useAuth();
     const [login, setLogin] = useState('');
     const [loginToPrint, setLoginToPrint] = useState('');
     const [error, setError] = useState('');
     const [dictionaries, setDictionaries] = useState([]);
+    const [isSubscribing, setIsSubscribing] = useState(false);
 
     const handleSearch = async (e) => {
         e.preventDefault();
@@ -36,6 +37,22 @@ export const Search = () => {
         }
     };
 
+    const handleSubscribe = async () => {
+        if (!loginToPrint) return;
+
+        setIsSubscribing(true);
+        try {
+            // Здесь будет логика подписки
+            // Например: await userApi.subscribeToUser(loginToPrint);
+            alert(`Вы подписались на пользователя ${loginToPrint}`);
+        } catch (err) {
+            console.error(err);
+            setError('Ошибка при подписке');
+        } finally {
+            setIsSubscribing(false);
+        }
+    };
+
     return (
         <div className="container-fluid">
             <form className="search-form d-flex" onSubmit={handleSearch}>
@@ -51,9 +68,20 @@ export const Search = () => {
 
             <div className="d-flex justify-content-center align-items-center mb-2" style={{ minHeight: '60px' }}>
                 {loginToPrint && (
-                    <span className="display-6 text-center fw-bold">
-                        {loginToPrint}
-                    </span>
+                    <>
+                        <span className="display-6 text-center fw-bold me-3">
+                            {loginToPrint}
+                        </span>
+                        {loginToPrint !== user && (
+                            <button
+                                onClick={handleSubscribe}
+                                className="btn custom-outline-btn"
+                                disabled={isSubscribing}
+                            >
+                                {isSubscribing ? 'Подписка...' : 'Подписаться'}
+                            </button>
+                        )}
+                    </>
                 )}
                 {error && (
                     <span className="text-danger text-center fw-semibold">{error}</span>
