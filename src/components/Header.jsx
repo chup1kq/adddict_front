@@ -28,9 +28,14 @@ export const Header = () => {
                             <a className="nav-link" href="#">Лента</a>
                         </li>
                         {token && (
-                            <li className="nav-item">
-                                <a className="nav-link" href="/account">Мои словари</a>
-                            </li>
+                            <>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/account">Мои словари</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link" href="/search">Поиск</a>
+                                </li>
+                            </>
                         )}
                     </ul>
                     <div className="d-flex align-items-center">

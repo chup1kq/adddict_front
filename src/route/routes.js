@@ -7,6 +7,7 @@ import {Dictionary} from "../pages/Dictionary"
 import {useAuth} from "../context/AuthContext";
 import {useRoutes} from "react-router-dom";
 import {Quiz} from "../pages/Quiz";
+import {Search} from "../pages/Search";
 
 export const AppRoutes = () => {
     const {token} = useAuth();
@@ -43,6 +44,10 @@ export const AppRoutes = () => {
         {
             path: '/dictionaries/:id',
             element: <Dictionary />,
+        },
+        {
+            path: '/search',
+            element: <Search />,
         }
     ]);
 }
