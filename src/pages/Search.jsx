@@ -3,7 +3,7 @@ import '../static/styles/Search.css';
 import { userApi } from '../api/userApi';
 import { dictionaryApi } from '../api/dictionaryApi';
 import { useAuth } from "../context/AuthContext";
-import {UserDictionaries} from "./UserDictionaries";
+import {PublicDictionaries} from "./PublicDictionaries";
 
 export const Search = () => {
     const { user } = useAuth(); // Получаем токен из контекста
@@ -21,7 +21,6 @@ export const Search = () => {
             if (exists) {
                 setLoginToPrint(login);
                 const userData = await userApi.getUserByLogin(login);
-                console.log(userData);
                 const data = await dictionaryApi.getPublicDictionaries(userData.id);
                 setDictionaries(data.page.content);
             } else {
@@ -62,9 +61,10 @@ export const Search = () => {
 
             <div className="row mt-3 mb-4">
                 <div className="col-12">
-                    <UserDictionaries
+                    <PublicDictionaries
                         dictionaries={dictionaries}
                         isMine={false}
+                        userLogin={login}
                     />
                 </div>
             </div>

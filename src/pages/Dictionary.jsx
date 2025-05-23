@@ -223,6 +223,8 @@ export const Dictionary = () => {
         }
     };
 
+
+
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
