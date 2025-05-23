@@ -82,9 +82,6 @@ export const User = () => {
             console.error("Ошибка при создании словаря:", error);
         }
 
-        console.log('Создание нового словаря:', dictToAdd);
-        // Здесь должна быть логика создания словаря через API
-        console.log(dictionaryApi.createDictionary(dictToAdd, localStorage.getItem("token")));
         setShowAddDictionaryModal(false);
     };
 
@@ -157,6 +154,7 @@ export const User = () => {
                         <UserDictionaries
                             dictionaries={subscribedDictionaries}
                             isMine={false}
+                            setDictionaries={setSubscribedDictionaries}
                         />
                     }
                 </div>

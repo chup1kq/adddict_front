@@ -90,5 +90,14 @@ export const dictionaryApi = {
             throw new Error('Ошибка при загрузке ленты словарей');
         }
         return await response.json();
+    },
+
+    async getPublicDictionaries(id) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/${id}`);
+
+        if (!response.ok) {
+            throw new Error('Ошибка при удалении словаря');
+        }
+        return await response.json();
     }
 }

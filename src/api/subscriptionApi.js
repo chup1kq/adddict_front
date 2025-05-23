@@ -16,19 +16,6 @@ export const subscriptionAPI = {
         return await response.json();
     },
 
-    async unsubscribeFromDictionary(subscribeId, token) {
-        const response = await fetch(`${SUBSCRIPTION_API_BASE_URL}/${subscribeId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('Ошибка при отписке от словаря');
-        }
-        return response.ok;
-    },
-
     async unsubscribeFromDictionaryById(dictionaryId, token) {
         const response = await fetch(`${SUBSCRIPTION_API_BASE_URL}/${dictionaryId}`, {
             method: 'DELETE',
@@ -52,5 +39,18 @@ export const subscriptionAPI = {
             throw new Error('Ошибка при получении списка подписок');
         }
         return await response.json();
+    },
+
+
+    async isSubscribedToDictionary(id, token) {
+        const response = await fetch(`${SUBSCRIPTION_API_BASE_URL}/subscribed/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при определении подписки на слова');
+        }
+        return response.json();
     }
 };
