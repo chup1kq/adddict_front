@@ -2,54 +2,12 @@ import { UserDictionaries } from "./UserDictionaries";
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { WordEditModal } from "../components/dictionary/WordEditModal";
-import {dictionaryApi} from "../api/dictionaryApi";
-
-const dictionaries = {
-    your: [
-        {
-            id: 1,
-            name: 'Животные',
-            description: 'словарь для животных',
-            isPublic: false,
-            createdAt: 1686825045000,
-            authorId: 1,
-        },
-        {
-            id: 2,
-            name: 'Блюда',
-            description: 'Японская кухня',
-            isPublic: true,
-            createdAt: 1686826045000,
-            authorId: 1,
-        },
-        {
-            id: 3,
-            name: 'просто словарь',
-            description: '',
-            isPublic: false,
-            createdAt: 1646826045000,
-            authorId: 1,
-        },
-    ],
-    strangers: [
-        {
-            id: 4,
-            name: 'Древесина',
-            description: 'справочник для лесоруба',
-            isPublic: true,
-            createdAt: 1686826005000,
-            authorId: 2,
-        }
-    ]
-};
+import { dictionaryApi } from "../api/dictionaryApi";
 
 export const User = () => {
-    const {user} = useAuth();
+    const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('dictionaries');
-    const [underlineStyle, setUnderlineStyle] = useState({
-        width: 0,
-        left: 0
-    });
+    const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
     const [showAddDictionaryModal, setShowAddDictionaryModal] = useState(false);
     const [myDictionaries, setMyDictionaries] = useState([]);
     const [subscribedDictionaries, setSubscribedDictionaries] = useState([]);
@@ -75,11 +33,7 @@ export const User = () => {
 
     useEffect(() => {
         updateUnderlinePosition();
-
-        const handleResize = () => {
-            updateUnderlinePosition();
-        };
-
+        const handleResize = () => updateUnderlinePosition();
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, [activeTab]);
@@ -89,16 +43,12 @@ export const User = () => {
 
         const fetchDictionaries = async () => {
             try {
-                const myData = await dictionaryApi.getMyDictionaries(0, token);
-                // const subData = await dictionaryApi.getSubscribedDictionaries(token);
-
+                const [myData, subscribedData] = await Promise.all([
+                    dictionaryApi.getMyDictionaries(0, token),
+                    dictionaryApi.getSubscribedDictionaries(0, token)
+                ]);
                 setMyDictionaries(myData.page.content);
-                // setSubscribedDictionaries(subData.page.content);
-
-                console.log("Your Dictionaries:", myDictionaries);
-                console.log(myData.page.content);
-                // console.log("Subscribed Dictionaries:", subscribedDictionaries);
-
+                setSubscribedDictionaries(subscribedData.page.content);
             } catch (error) {
                 console.error("Ошибка при загрузке словарей:", error);
             }
@@ -109,36 +59,38 @@ export const User = () => {
         }
     }, [user]);
 
-
-    const handleAddDictionary = ({ original, translation, checked }) => {
+    const handleAddDictionary = async ({ original, translation, checked }) => {
         const dictToAdd = {
             name: original,
             description: translation,
             isPublic: !checked
+        };
+
+        try {
+            await dictionaryApi.createDictionary(dictToAdd, localStorage.getItem("token"));
+            // Перезапрашиваем список словарей
+            const token = localStorage.getItem("token");
+            const myData = await dictionaryApi.getMyDictionaries(0, token);
+            setMyDictionaries(myData.page.content);
+        } catch (error) {
+            console.error("Ошибка при создании словаря:", error);
         }
 
-        console.log('Создание нового словаря:', dictToAdd);
-        // Здесь должна быть логика создания словаря через API
-        console.log(dictionaryApi.createDictionary(dictToAdd, localStorage.getItem("token")));
         setShowAddDictionaryModal(false);
     };
 
     return (
-        <div className={'container-fluid'}>
-            <div className={'row mb-4 align-content-center'}>
-                {user}
-            </div>
+        <div className="container-fluid">
+            <div className="row mb-4 align-content-center">{user}</div>
+
             <div className="row bg-light pt-3">
                 <div className="col-12">
-                    <div
-                        className="d-flex justify-content-center position-relative"
-                        ref={containerRef}
-                    >
+                    <div className="d-flex justify-content-center position-relative" ref={containerRef}>
                         <div
                             ref={dictionariesRef}
-                            className="px-4 pb-3 cursor-pointer"
+                            className="px-4 pb-3"
                             onClick={() => setActiveTab('dictionaries')}
-                            style={{cursor:'pointer'}}
+                            style={{ cursor: 'pointer' }}
                         >
                             <span className={`fs-5 ${activeTab === 'dictionaries' ? 'text-dark fw-bold' : 'text-muted'}`}>
                                 Ваши словари
@@ -146,16 +98,15 @@ export const User = () => {
                         </div>
                         <div
                             ref={subscriptionsRef}
-                            className="px-4 pb-3 cursor-pointer"
+                            className="px-4 pb-3"
                             onClick={() => setActiveTab('subscriptions')}
-                            style={{cursor:'pointer'}}
+                            style={{ cursor: 'pointer' }}
                         >
                             <span className={`fs-5 ${activeTab === 'subscriptions' ? 'text-dark fw-bold' : 'text-muted'}`}>
                                 Подписки
                             </span>
                         </div>
 
-                        {/* Анимированное подчёркивание */}
                         <div
                             className="position-absolute bottom-0 bg-primary"
                             style={{
@@ -168,6 +119,7 @@ export const User = () => {
                     </div>
                 </div>
             </div>
+
             <div className="container px-5 py-4">
                 {activeTab === 'dictionaries' && (
                     <button
@@ -178,15 +130,17 @@ export const User = () => {
                     </button>
                 )}
             </div>
+
             <div className="row mt-3">
                 <div className="col-12">
-                    {activeTab === 'dictionaries' ?
-                        <UserDictionaries dictionaries={dictionaries.your} isMine={true} /> :
-                        <UserDictionaries dictionaries={dictionaries.strangers} isMine={false} />}
+                    {activeTab === 'dictionaries' ? (
+                        <UserDictionaries dictionaries={myDictionaries} isMine={true} />
+                    ) : (
+                        <UserDictionaries dictionaries={subscribedDictionaries} isMine={false} />
+                    )}
                 </div>
             </div>
 
-            {/* Модальное окно добавления словаря */}
             <WordEditModal
                 show={showAddDictionaryModal}
                 onCancel={() => setShowAddDictionaryModal(false)}
