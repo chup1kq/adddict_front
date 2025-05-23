@@ -1,4 +1,3 @@
-import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { FaEdit, FaTrash } from 'react-icons/fa';
@@ -7,8 +6,13 @@ import { WordEditModal } from '../components/dictionary/WordEditModal';
 import { Button } from "../components/Button";
 // import { dictionaryApi } from '../api/dictionaryApi';
 import "../static/styles/WordCard.css";
+import { useNavigate } from "react-router-dom";
+import { useParams, useLocation } from 'react-router-dom';
 
 export const Dictionary = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const isMine = location.state?.isMine || false;
     const { id } = useParams();
     const { user } = useAuth();
     const [dictionary, setDictionary] = useState(null);
@@ -18,9 +22,12 @@ export const Dictionary = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const [showDeleteWindow, setShowDeleteWindow] = useState(false);
+    const [showDictionaryEditModal, setShowDictionaryEditModal] = useState(false);
+    const [showDictionaryDeleteModal, setShowDictionaryDeleteModal] = useState(false);
     const [wordToDeleteId, setWordToDeleteId] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentWord, setCurrentWord] = useState(null);
+    const [showUnsubscribeModal, setShowUnsubscribeModal] = useState(false);
 
     const wordToDelete = words.find(word => word.id === wordToDeleteId);
 
@@ -31,7 +38,7 @@ export const Dictionary = () => {
                 // Тестовые данные вместо API запроса
                 const dictData = {
                     id: parseInt(id),
-                    name: `Словарь животных`,
+                    name: 'Словарь животных',
                     description: 'Тестовый словарь с животными',
                     isPublic: true,
                     createdAt: "2025-05-10T01:02:05.617498",
@@ -78,6 +85,46 @@ export const Dictionary = () => {
         } catch (error) {
             console.error('Ошибка загрузки:', error);
             setIsLoading(false);
+        }
+    };
+
+    const handleDictionaryEditClick = () => {
+        setShowDictionaryEditModal(true);
+    };
+
+    const handleDictionaryDeleteClick = () => {
+        setShowDictionaryDeleteModal(true);
+    };
+
+    const handleSaveDictionary = async ({ original, translation, checked }) => {
+        try {
+            console.log('Сохранение словаря:', {
+                id: dictionary.id,
+                name: original,
+                description: translation,
+                isPublic: !checked
+            });
+            // Здесь должна быть логика сохранения через API
+            setDictionary(prev => ({
+                ...prev,
+                name: original,
+                description: translation,
+                isPublic: !checked
+            }));
+            setShowDictionaryEditModal(false);
+        } catch (error) {
+            console.error('Ошибка сохранения:', error);
+        }
+    };
+
+    const handleConfirmDictionaryDelete = async () => {
+        try {
+            console.log('Удаление словаря:', dictionary.id);
+            // Здесь должна быть логика удаления через API
+            navigate('/account');
+            setShowDictionaryDeleteModal(false);
+        } catch (error) {
+            console.error('Ошибка удаления:', error);
         }
     };
 
@@ -135,6 +182,21 @@ export const Dictionary = () => {
         }
     };
 
+    const handleUnsubscribeClick = () => {
+        setShowUnsubscribeModal(true);
+    };
+
+    const handleConfirmUnsubscribe = async () => {
+        try {
+            console.log('Отписка от словаря:', dictionary.id);
+            // Здесь должна быть логика отписки через API
+            navigate('/account');
+            setShowUnsubscribeModal(false);
+        } catch (error) {
+            console.error('Ошибка отписки:', error);
+        }
+    };
+
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
@@ -144,14 +206,39 @@ export const Dictionary = () => {
                     <div className="card-body">
                         <h2 className="mb-3">{dictionary.name}</h2>
                         <p className="text-muted mb-3">{dictionary.description}</p>
-                        {user && (
-                            <button
-                                className="btn custom-outline-btn btn-sm"
-                                onClick={handleAddWordClick}
-                            >
-                                Добавить слово
-                            </button>
-                        )}
+                        <div className="d-flex gap-2">
+                            {user && (
+                                isMine ? (
+                                    <>
+                                        <button
+                                            className="btn custom-outline-btn btn-sm"
+                                            onClick={handleAddWordClick}
+                                        >
+                                            Добавить слово
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-secondary btn-sm"
+                                            onClick={handleDictionaryEditClick}
+                                        >
+                                            Редактировать словарь
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-danger btn-sm"
+                                            onClick={handleDictionaryDeleteClick}
+                                        >
+                                            Удалить словарь
+                                        </button>
+                                    </>
+                                ) : (
+                                    <button
+                                        className="btn btn-outline-danger btn-sm"
+                                        onClick={handleUnsubscribeClick}
+                                    >
+                                        Отписаться от словаря
+                                    </button>
+                                )
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -165,22 +252,24 @@ export const Dictionary = () => {
                                         <span className="text-muted text-break">{word.translation}</span>
                                     </div>
                                 </div>
-                                <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
-                                    <button
-                                        className="btn btn-sm text-primary p-1 mb-1 btn-word"
-                                        onClick={() => handleEditClick(word)}
-                                        aria-label="Редактировать"
-                                    >
-                                        <FaEdit size={14} color={"#d4a373"} />
-                                    </button>
-                                    <button
-                                        className="btn btn-sm text-danger p-1"
-                                        onClick={() => handleDeleteClick(word.id)}
-                                        aria-label="Удалить"
-                                    >
-                                        <FaTrash size={14} />
-                                    </button>
-                                </div>
+                                {user && isMine && (
+                                    <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
+                                        <button
+                                            className="btn btn-sm text-primary p-1 mb-1 btn-word"
+                                            onClick={() => handleEditClick(word)}
+                                            aria-label="Редактировать"
+                                        >
+                                            <FaEdit size={14} color={"#d4a373"} />
+                                        </button>
+                                        <button
+                                            className="btn btn-sm text-danger p-1"
+                                            onClick={() => handleDeleteClick(word.id)}
+                                            aria-label="Удалить"
+                                        >
+                                            <FaTrash size={14} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -221,6 +310,50 @@ export const Dictionary = () => {
                 initialOriginal={currentWord?.original || ''}
                 initialTranslation={currentWord?.translation || ''}
             />
+
+            {showDictionaryEditModal && (
+                <WordEditModal
+                    show={showDictionaryEditModal}
+                    onCancel={() => setShowDictionaryEditModal(false)}
+                    onSave={handleSaveDictionary}
+                    title="Редактирование словаря"
+                    originalLabel="Название"
+                    originalPlaceholder="Введите название словаря"
+                    translationLabel="Описание"
+                    translationPlaceholder="Введите описание словаря"
+                    initialOriginal={dictionary.name}
+                    initialTranslation={dictionary.description || ''}
+                    showCheckbox={true}
+                    checkboxLabel="Приватный словарь"
+                    initialChecked={!dictionary.isPublic}
+                />
+            )}
+
+            {showDictionaryDeleteModal && (
+                <ConfirmationWindow
+                    show={showDictionaryDeleteModal}
+                    onCancel={() => setShowDictionaryDeleteModal(false)}
+                    onConfirm={handleConfirmDictionaryDelete}
+                    title="Удалить словарь?"
+                    message={`Действительно хотите удалить словарь "${dictionary.name}"?`}
+                    confirmText="Удалить"
+                    cancelText="Отмена"
+                    confirmVariant="danger"
+                />
+            )}
+
+            {showUnsubscribeModal && (
+                <ConfirmationWindow
+                    show={showUnsubscribeModal}
+                    onCancel={() => setShowUnsubscribeModal(false)}
+                    onConfirm={handleConfirmUnsubscribe}
+                    title="Отписаться от словаря?"
+                    message={`Действительно хотите отписаться от словаря "${dictionary.name}"?`}
+                    confirmText="Отписаться"
+                    cancelText="Отмена"
+                    confirmVariant="danger"
+                />
+            )}
         </>
     );
 };
