@@ -6,10 +6,12 @@ import { WordEditModal } from '../components/dictionary/WordEditModal';
 import { Button } from "../components/Button";
 // import { dictionaryApi } from '../api/dictionaryApi';
 import "../static/styles/WordCard.css";
+import { useNavigate } from "react-router-dom";
 import { useParams, useLocation } from 'react-router-dom';
 
 export const Dictionary = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const isMine = location.state?.isMine || false;
     const { id } = useParams();
     const { user } = useAuth();
@@ -119,8 +121,7 @@ export const Dictionary = () => {
         try {
             console.log('Удаление словаря:', dictionary.id);
             // Здесь должна быть логика удаления через API
-            // После удаления можно перенаправить пользователя
-            // navigate('/dictionaries');
+            navigate('/account');
             setShowDictionaryDeleteModal(false);
         } catch (error) {
             console.error('Ошибка удаления:', error);
@@ -189,7 +190,7 @@ export const Dictionary = () => {
         try {
             console.log('Отписка от словаря:', dictionary.id);
             // Здесь должна быть логика отписки через API
-            // navigate('/dictionaries');
+            navigate('/account');
             setShowUnsubscribeModal(false);
         } catch (error) {
             console.error('Ошибка отписки:', error);
