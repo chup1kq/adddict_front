@@ -2,6 +2,7 @@ import { UserDictionaries } from "./UserDictionaries";
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from "../context/AuthContext";
 import { WordEditModal } from "../components/dictionary/WordEditModal";
+import {dictionaryApi} from "../api/dictionaryApi";
 
 const dictionaries = {
     your: [
@@ -82,12 +83,15 @@ export const User = () => {
     }, [activeTab]);
 
     const handleAddDictionary = ({ original, translation, checked }) => {
-        console.log('Создание нового словаря:', {
+        const dictToAdd = {
             name: original,
             description: translation,
             isPublic: !checked
-        });
+        }
+
+        console.log('Создание нового словаря:', dictToAdd);
         // Здесь должна быть логика создания словаря через API
+        console.log(dictionaryApi.createDictionary(dictToAdd, localStorage.getItem("token")));
         setShowAddDictionaryModal(false);
     };
 
@@ -149,8 +153,8 @@ export const User = () => {
             <div className="row mt-3">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
-                        <UserDictionaries dictionaries={dictionaries.your} /> :
-                        <UserDictionaries dictionaries={dictionaries.strangers} />}
+                        <UserDictionaries dictionaries={dictionaries.your} isMine={true} /> :
+                        <UserDictionaries dictionaries={dictionaries.strangers} isMine={false} />}
                 </div>
             </div>
 

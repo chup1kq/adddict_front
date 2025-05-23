@@ -6,12 +6,13 @@ import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow'
 import { WordEditModal } from '../components/dictionary/WordEditModal';
 import { dictionaryApi } from '../api/dictionaryApi';
 
-export const UserDictionaries = ({ dictionaries }) => {
+export const UserDictionaries = ({ dictionaries, isMine }) => {
     const navigate = useNavigate();
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false); // Объединяем в одно состояние
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentDictionary, setCurrentDictionary] = useState(null);
-    const [dictionaryToDelete, setDictionaryToDelete] = useState(null);
+    const [dictionaryForAction, setDictionaryForAction] = useState(null); // Объединяем в одно состояние
+    const [actionType, setActionType] = useState(null); // 'delete' или 'unsubscribe'
 
     const handleDictionaryClick = (dictId) => {
         // тестовый рабочий запрос на localhost:8080
@@ -32,15 +33,29 @@ export const UserDictionaries = ({ dictionaries }) => {
 
     const handleDeleteClick = (dict, e) => {
         e.stopPropagation();
-        setDictionaryToDelete(dict);
-        setShowDeleteModal(true);
+        setDictionaryForAction(dict);
+        setActionType('delete');
+        setShowConfirmModal(true);
     };
 
-    const handleConfirmDelete = () => {
-        console.log('Удаление словаря:', dictionaryToDelete.id);
-        // Здесь должна быть логика удаления словаря через API
-        setShowDeleteModal(false);
-        setDictionaryToDelete(null);
+    const handleUnsubscribeClick = (dict, e) => {
+        e.stopPropagation();
+        setDictionaryForAction(dict);
+        setActionType('unsubscribe');
+        setShowConfirmModal(true);
+    };
+
+    const handleConfirmAction = () => {
+        if (actionType === 'delete') {
+            console.log('Удаление словаря:', dictionaryForAction.id);
+            // Логика удаления
+        } else {
+            console.log('Отписка от словаря:', dictionaryForAction.id);
+            // Логика отписки
+        }
+        setShowConfirmModal(false);
+        setDictionaryForAction(null);
+        setActionType(null);
     };
 
     const handleSaveDictionary = ({ original, translation, checked }) => {
@@ -80,23 +95,27 @@ export const UserDictionaries = ({ dictionaries }) => {
                                         className="dropdown-menu dropdown-menu-end"
                                         onClick={(e) => e.stopPropagation()}
                                     >
-                                        <li>
-                                            <button
-                                                className="dropdown-item"
-                                                onClick={(e) => handleEditClick(dict, e)}
-                                            >
-                                                Редактировать
-                                            </button>
-                                        </li>
-                                        <li><hr className="dropdown-divider" /></li>
-                                        <li>
-                                            <button
-                                                className="dropdown-item text-danger"
-                                                onClick={(e) => handleDeleteClick(dict, e)}
-                                            >
-                                                Удалить словарь
-                                            </button>
-                                        </li>
+                                        {isMine ? (
+                                            <>
+                                                <li>
+                                                    <button className="dropdown-item" onClick={(e) => handleEditClick(dict, e)}>
+                                                        Редактировать
+                                                    </button>
+                                                </li>
+                                                <li><hr className="dropdown-divider" /></li>
+                                                <li>
+                                                    <button className="dropdown-item text-danger" onClick={(e) => handleDeleteClick(dict, e)}>
+                                                        Удалить словарь
+                                                    </button>
+                                                </li>
+                                            </>
+                                        ) : (
+                                            <li>
+                                                <button className="dropdown-item text-danger" onClick={(e) => handleUnsubscribeClick(dict, e)}>
+                                                    Отписаться
+                                                </button>
+                                            </li>
+                                        )}
                                     </ul>
                                 </div>
 
@@ -138,18 +157,25 @@ export const UserDictionaries = ({ dictionaries }) => {
                 </div>
             </div>
 
-            {dictionaryToDelete && (
+            {dictionaryForAction && (
                 <ConfirmationWindow
-                    show={showDeleteModal}
-                    onCancel={() => setShowDeleteModal(false)}
-                    onConfirm={handleConfirmDelete}
-                    title="Удалить словарь?"
-                    message={`Действительно хотите удалить словарь "${dictionaryToDelete.name}"?`}
-                    confirmText="Удалить"
+                    show={showConfirmModal}
+                    onCancel={() => {
+                        setShowConfirmModal(false);
+                        setDictionaryForAction(null);
+                        setActionType(null);
+                    }}
+                    onConfirm={handleConfirmAction}
+                    title={actionType === 'delete' ? "Удалить словарь?" : "Отписаться от словаря?"}
+                    message={actionType === 'delete'
+                        ? `Действительно хотите удалить словарь "${dictionaryForAction.name}"?`
+                        : `Действительно хотите отписаться от словаря "${dictionaryForAction.name}"?`}
+                    confirmText={actionType === 'delete' ? "Удалить" : "Отписаться"}
                     cancelText="Отмена"
                     confirmVariant="danger"
                 />
             )}
+
 
             {currentDictionary && (
                 <WordEditModal
