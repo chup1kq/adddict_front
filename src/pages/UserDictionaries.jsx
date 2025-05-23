@@ -45,27 +45,35 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
         setShowConfirmModal(true);
     };
 
-    const handleConfirmAction = () => {
+    const handleConfirmAction = async () => {
         if (actionType === 'delete') {
-            console.log('Удаление словаря:', dictionaryForAction.id);
-            // Логика удаления
-        } else {
-            console.log('Отписка от словаря:', dictionaryForAction.id);
-            // Логика отписки
+            try {
+                await dictionaryApi.deleteDictionary(dictionaryForAction.id, localStorage.getItem("token"));
+                console.log('Словарь удалён:', dictionaryForAction.id);
+                // Здесь можно обновить список словарей, если есть такая логика
+            } catch (error) {
+                console.error('Ошибка при удалении словаря:', error);
+                alert('Не удалось удалить словарь.');
+            }
         }
         setShowConfirmModal(false);
         setDictionaryForAction(null);
         setActionType(null);
     };
 
-    const handleSaveDictionary = ({ original, translation, checked }) => {
-        console.log('Сохранение словаря:', {
-            id: currentDictionary.id,
-            name: original,
-            description: translation,
-            isPublic: !checked
-        });
-        // Здесь должна быть логика сохранения изменений через API
+    const handleSaveDictionary = async ({ original, translation, checked }) => {
+        try {
+            await dictionaryApi.updateDictionary(currentDictionary.id, {
+                name: original,
+                description: translation,
+                isPublic: !checked
+            }, localStorage.getItem("token"));
+            console.log('Словарь обновлён:', currentDictionary.id);
+            // Здесь можно обновить список словарей, если есть логика перерисовки
+        } catch (error) {
+            console.error('Ошибка при сохранении словаря:', error);
+            alert('Не удалось сохранить изменения.');
+        }
         setShowEditModal(false);
         setCurrentDictionary(null);
     };
