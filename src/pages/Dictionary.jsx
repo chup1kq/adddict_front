@@ -63,25 +63,26 @@ export const Dictionary = () => {
     const loadMoreWords = async () => {
         if (isLoading || !hasMore) return;
         setIsLoading(true);
-        try {
-            // Тестовые данные для второй страницы
-            const nextTestWords = [
-                { id: 6, original: 'dog', translation: 'собака' },
-                { id: 7, original: 'bird', translation: 'птица' },
-                { id: 8, original: 'fish', translation: 'рыба' },
-            ];
 
-            setTimeout(() => { // Имитация задержки запроса
-                setWords(prev => [...prev, ...nextTestWords]);
-                setPage(prev => prev + 1);
-                setHasMore(false); // Предполагаем, что это последняя страница
-                setIsLoading(false);
-            }, 500);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await translateAPI.getDictionaryWords(id, page + 1, token);
+            const newWords = response.page.content.map(w => ({
+                id: w.id,
+                original: w.originText,
+                translation: w.translationText
+            }));
+
+            setWords(prev => [...prev, ...newWords]);
+            setPage(prev => prev + 1);
+            setHasMore(!response.page.last); // Если это последняя страница — прекращаем загрузки
         } catch (error) {
-            console.error('Ошибка загрузки:', error);
+            console.error('Ошибка загрузки следующей страницы:', error);
+        } finally {
             setIsLoading(false);
         }
     };
+
 
     const handleDictionaryEditClick = () => {
         setShowDictionaryEditModal(true);
@@ -93,24 +94,25 @@ export const Dictionary = () => {
 
     const handleSaveDictionary = async ({ original, translation, checked }) => {
         try {
-            console.log('Сохранение словаря:', {
-                id: dictionary.id,
-                name: original,
-                description: translation,
-                isPublic: !checked
-            });
-            // Здесь должна быть логика сохранения через API
-            setDictionary(prev => ({
-                ...prev,
-                name: original,
-                description: translation,
-                isPublic: !checked
-            }));
+            const token = localStorage.getItem('token');
+            const updated = await dictionaryApi.updateDictionary(
+                dictionary.id,
+                {
+                    name: original,
+                    description: translation,
+                    isPublic: !checked
+                },
+                token
+            );
+
+            setDictionary(updated);
             setShowDictionaryEditModal(false);
         } catch (error) {
-            console.error('Ошибка сохранения:', error);
+            console.error('Ошибка при обновлении словаря:', error);
+            alert('Не удалось сохранить изменения');
         }
     };
+
 
     const handleConfirmDictionaryDelete = async () => {
         try {
@@ -136,18 +138,43 @@ export const Dictionary = () => {
 
     const handleSaveWord = async ({ original, translation }) => {
         try {
+            const token = localStorage.getItem('token');
+
             if (currentWord?.id) {
-                // Тестовая логика обновления вместо API
-                console.log('Обновление слова:', currentWord.id, original, translation);
+                const updatedWord = await translateAPI.updateWord(
+                    id,
+                    currentWord.id,
+                    {
+                        originText: original,
+                        translationText: translation
+                    },
+                    token
+                );
+
                 setWords(words.map(w =>
-                    w.id === currentWord.id ? { ...w, original, translation } : w
+                    w.id === currentWord.id ? {
+                        ...w,
+                        original: updatedWord.originText,
+                        translation: updatedWord.translationText
+                    } : w
                 ));
             } else {
-                // Тестовая логика добавления вместо API
-                console.log('Добавление слова:', original, translation);
-                const newId = Math.max(...words.map(w => w.id), 0) + 1;
-                setWords([{ id: newId, original, translation }, ...words]);
+                const newWord = await translateAPI.addWord(
+                    id,
+                    {
+                        originText: original,
+                        translationText: translation
+                    },
+                    token
+                );
+
+                setWords([{
+                    id: newWord.id,
+                    original: newWord.originText,
+                    translation: newWord.translationText
+                }, ...words]);
             }
+
             setShowEditModal(false);
             setCurrentWord(null);
         } catch (error) {
@@ -168,15 +195,18 @@ export const Dictionary = () => {
 
     const handleConfirmDelete = async () => {
         try {
-            // Тестовая логика удаления вместо API
-            console.log('Удаление слова с ID:', wordToDelete.id);
+            const token = localStorage.getItem('token');
+            await translateAPI.deleteWord(id, wordToDelete.id, token);
+
             setWords(words.filter(w => w.id !== wordToDelete.id));
             setShowDeleteWindow(false);
+            setWordToDeleteId(null);
         } catch (error) {
             console.error('Ошибка удаления:', error);
             alert('Произошла ошибка при удалении');
         }
     };
+
 
     const handleUnsubscribeClick = () => {
         setShowUnsubscribeModal(true);

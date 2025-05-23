@@ -1,18 +1,21 @@
-import { FaLock, FaLockOpen } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import {FaLock, FaLockOpen} from "react-icons/fa";
+import {useNavigate} from "react-router-dom";
 import "../static/styles/CardDictionary.css";
-import { useState } from 'react';
-import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
-import { WordEditModal } from '../components/dictionary/WordEditModal';
-import { dictionaryApi } from '../api/dictionaryApi';
+import {useState} from 'react';
+import {ConfirmationWindow} from '../components/dictionary/ConfirmationWindow';
+import {WordEditModal} from '../components/dictionary/WordEditModal';
+import {dictionaryApi} from '../api/dictionaryApi';
 
-export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpdateDictionary }) => {
+export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdateDictionary}) => {
     const navigate = useNavigate();
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Объединяем в одно состояние
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentDictionary, setCurrentDictionary] = useState(null);
     const [dictionaryForAction, setDictionaryForAction] = useState(null); // Объединяем в одно состояние
     const [actionType, setActionType] = useState(null); // 'delete' или 'unsubscribe'
+    const [openDropdownId, setOpenDropdownId] = useState(null);
+    const [selectedDictionaries, setSelectedDictionaries] = useState([]);
+
 
     const handleDictionaryClick = async (dictionaryId) => {
         try {
@@ -75,7 +78,7 @@ export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpda
         setActionType(null);
     };
 
-    const handleSaveDictionary = async ({ original, translation, checked }) => {
+    const handleSaveDictionary = async ({original, translation, checked}) => {
         try {
             await dictionaryApi.updateDictionary(currentDictionary.id, {
                 name: original,
@@ -99,8 +102,31 @@ export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpda
         setCurrentDictionary(null);
     };
 
+    const toggleSelectDictionary = (id) => {
+        setSelectedDictionaries((prev) =>
+            prev.includes(id) ? prev.filter(d => d !== id) : [...prev, id]
+        );
+    };
+
+
     return (
         <>
+            {selectedDictionaries.length > 0 && (
+                <div className="d-flex justify-content-center my-3">
+                    <button
+                        className="btn mx-2 custom-train-btn"
+                        onClick={() => navigate(`/quiz/txt?ids=${selectedDictionaries.join(',')}`)}
+                    >
+                        Начать обычную тренировку
+                    </button>
+                    <button
+                        className="btn btn-secondary mx-2"
+                        onClick={() => navigate(`/quiz/var?ids=${selectedDictionaries.join(',')}`)}
+                    >
+                        Начать квиз
+                    </button>
+                </div>
+            )}
             <div className="container px-5">
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
                     {dictionaries.map((dict) => (
@@ -108,7 +134,8 @@ export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpda
                             <div className="card h-100 bg-light card-dictionary"
                                  onClick={() => handleDictionaryClick(dict.id, isMine)}
                             >
-                                <div className="dropdown position-absolute top-0 end-0 m-2" onClick={handleDropdownClick}>
+                                <div className="dropdown position-absolute top-0 end-0 m-2"
+                                     onClick={handleDropdownClick}>
                                     <button
                                         className="btn btn-sm btn-outline-secondary dropdown-toggle"
                                         type="button"
@@ -127,27 +154,31 @@ export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpda
                                         {isMine ? (
                                             <>
                                                 <li>
-                                                    <button className="dropdown-item" onClick={(e) => handleEditClick(dict, e)}>
+                                                    <button className="dropdown-item"
+                                                            onClick={(e) => handleEditClick(dict, e)}>
                                                         Редактировать
                                                     </button>
                                                 </li>
-                                                <li><hr className="dropdown-divider" /></li>
                                                 <li>
-                                                    <button className="dropdown-item text-danger" onClick={(e) => handleDeleteClick(dict, e)}>
+                                                    <hr className="dropdown-divider"/>
+                                                </li>
+                                                <li>
+                                                    <button className="dropdown-item text-danger"
+                                                            onClick={(e) => handleDeleteClick(dict, e)}>
                                                         Удалить словарь
                                                     </button>
                                                 </li>
                                             </>
                                         ) : (
                                             <li>
-                                                <button className="dropdown-item text-danger" onClick={(e) => handleUnsubscribeClick(dict, e)}>
+                                                <button className="dropdown-item text-danger"
+                                                        onClick={(e) => handleUnsubscribeClick(dict, e)}>
                                                     Отписаться
                                                 </button>
                                             </li>
                                         )}
                                     </ul>
                                 </div>
-
                                 <div className="card-body">
                                     <div className="d-flex align-items-center mb-3">
                                         <h5 className="card-title mb-0 me-2" style={{
@@ -158,22 +189,63 @@ export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpda
                                             {dict.name}
                                         </h5>
                                         <span className={`badge ${dict.isPublic ? 'bg-success' : 'bg-secondary'}`}>
-                                            {dict.isPublic ? <FaLockOpen /> : <FaLock />}
+                                            {dict.isPublic ? <FaLockOpen/> : <FaLock/>}
                                         </span>
+                                        <div className="form-check top-0 start-0 m-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                checked={selectedDictionaries.includes(dict.id)}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onChange={() => toggleSelectDictionary(dict.id)}
+                                            />
+                                        </div>
                                     </div>
                                     <p className="card-text">
                                         {dict.description || <span className="text-muted">Описание отсутствует</span>}
                                     </p>
                                     <div className="d-flex justify-content-between align-items-center mt-3">
-                                        <button
-                                            className="btn custom-outline-btn btn-sm"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                // логика для тренировки
-                                            }}
-                                        >
-                                            Тренировка
-                                        </button>
+                                        <div className="dropdown">
+                                            <button
+                                                className="btn custom-outline-btn btn-sm dropdown-toggle"
+                                                type="button"
+                                                aria-expanded={openDropdownId === dict.id}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setOpenDropdownId(openDropdownId === dict.id ? null : dict.id);
+                                                }}
+                                            >
+                                                Тренировка
+                                            </button>
+                                            <ul
+                                                className={`dropdown-menu ${openDropdownId === dict.id ? 'show' : ''}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                                onMouseLeave={() => setOpenDropdownId(null)}
+                                            >
+                                                <li>
+                                                    <button
+                                                        className="dropdown-item"
+                                                        onClick={() => {
+                                                            console.log('Обычная тренировка:', dict.id);
+                                                            navigate(`/quiz/txt?ids=${dict.id}`);
+                                                        }}
+                                                    >
+                                                        Обычная тренировка
+                                                    </button>
+                                                </li>
+                                                <li>
+                                                    <button
+                                                        className="dropdown-item"
+                                                        onClick={() => {
+                                                            console.log('Квиз тренировка:', dict.id);
+                                                            navigate(`/quiz/var?ids=${dict.id}`);
+                                                        }}
+                                                    >
+                                                        Квиз
+                                                    </button>
+                                                </li>
+                                            </ul>
+                                        </div>
                                         <div className="d-flex flex-column text-end">
                                             <span className="small text-muted">Создан:</span>
                                             <span className="small">{convertDate(dict.createdAt)}</span>
