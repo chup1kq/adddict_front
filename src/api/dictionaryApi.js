@@ -78,5 +78,17 @@ export const dictionaryApi = {
             throw new Error('Ошибка при удалении словаря');
         }
         return response.ok;
+    },
+
+    async getDictFeed(page = 0, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/feed?page=${page}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при загрузке ленты словарей');
+        }
+        return await response.json();
     }
 }
