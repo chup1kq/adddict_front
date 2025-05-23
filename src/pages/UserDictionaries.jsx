@@ -17,7 +17,7 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
     const handleDictionaryClick = (dictId) => {
         // тестовый рабочий запрос на localhost:8080
         console.log(dictionaryApi.getDictionary(3, localStorage.getItem("token")));
-        navigate(`/dictionaries/${dictId}`);
+        navigate(`/dictionaries/${dictId}`, { state: { isMine } });
     };
 
     const handleDropdownClick = (e) => {
@@ -77,7 +77,7 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
                     {dictionaries.map((dict) => (
                         <div className="col" key={dict.id}>
                             <div className="card h-100 bg-light card-dictionary"
-                                 onClick={() => handleDictionaryClick(dict.id)}
+                                 onClick={() => handleDictionaryClick(dict.id, isMine)}
                             >
                                 <div className="dropdown position-absolute top-0 end-0 m-2" onClick={handleDropdownClick}>
                                     <button
