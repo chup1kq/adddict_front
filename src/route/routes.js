@@ -37,7 +37,7 @@ export const AppRoutes = () => {
             element: <User/>,
         },
         {
-            path: '/quiz/:type/:url',
+            path: '/quiz/:type',
             element: <Quiz />,
         },
         {

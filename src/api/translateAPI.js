@@ -68,18 +68,31 @@ export const translateAPI = {
         return response.ok;
     },
 
-    async getShuffledTranslations(dictionaryIds, token) {
-        const response = await fetch(`${DICTIONARY_API_BASE_URL}/words/shuffle`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({ dictionaryIds })
-        });
+    async getShuffledTranslations(dictionaryIds, page = 0, token) {
+        const seed = Date.now() + Math.floor(Math.random() * 1000);
+        const params = new URLSearchParams();
+
+        params.append("page", page);
+        params.append("seed", seed);
+
+        // добавляем каждый dictionaryId отдельно
+        dictionaryIds.forEach(id => params.append("dictionaryIds", id));
+
+        const response = await fetch(
+            `${DICTIONARY_API_BASE_URL}/words/shuffle?${params.toString()}`,
+            {
+                method: "GET",
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            }
+        );
+
         if (!response.ok) {
             throw new Error('Ошибка при получении перемешанных слов');
         }
+
         return await response.json();
     }
+
 };

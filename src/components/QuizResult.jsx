@@ -3,7 +3,7 @@ import thumbsUp from '../static/images/+1.png';
 import slightlyFrowning from '../static/images/slightly_frowning_face.png';
 import sweat from '../static/images/sweat.png';
 
-export const Result = ({ count, correctCount }) => {
+export const Result = ({ count, correctCount, onRetry  }) => {
     const percentage = Math.round((correctCount / count) * 100);
 
     const getResultIcon = () => {
@@ -36,14 +36,17 @@ export const Result = ({ count, correctCount }) => {
             <h3>Правильных ответов: {correctCount} из {count}</h3>
 
             <div className="result-buttons">
-                <button className="primary-button">
+                <button
+                    className="primary-button"
+                    onClick={onRetry }
+                >
                     Попробовать снова
                 </button>
-                {correctCount < count && (
+                {/*{correctCount < count && (
                     <button className="secondary-button">
                         Работа над ошибками
                     </button>
-                )}
+                )}*/}
             </div>
         </div>
     );
