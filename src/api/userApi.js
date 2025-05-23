@@ -32,5 +32,56 @@ export const userApi = {
 
         return response.status === 200;
     },
+
+    // subscriberId - кто подписывается
+    // authorId - на кого подписываются
+    async subscribe(subscriberId, authorId) {
+        const response = await fetch(`${USER_API_BASE_URL}/subscribe`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "subscriberId":  subscriberId,
+                "authorId":  authorId,
+            })
+        })
+        if (!response.ok) {
+            throw new Error('Ошибка при подписке на пользователя');
+        }
+
+        return response.status === 200;
+    },
+
+    // subscriberId - кто отписывается
+    // authorId - от кого отписываются
+    async unsubscribe(subscriberId, authorId) {
+        const response = await fetch(
+            `${USER_API_BASE_URL}/subscribe/unsubscribe?subscriberId=${subscriberId}&authorId=${authorId}`, {
+                method: 'DELETE'});
+
+        return response.status === 200;
+    },
+
+    // userid - проверить, что ты подписан на него
+    // subscriberId - это ты сам
+    async isSubscriber(userId, subscriberId) {
+        const response = await fetch(
+            `${USER_API_BASE_URL}/user/is-subscriber?userId=${userId}&subscriberId=${subscriberId}`,
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`Ошибка запроса is-subscriber: ${response.status}`);
+        }
+
+        return await response.json();
+    }
+
+
 }
 
