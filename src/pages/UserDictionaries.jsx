@@ -1,11 +1,13 @@
 import {FaLock, FaLockOpen} from "react-icons/fa";
 import {useNavigate} from "react-router-dom";
 import "../static/styles/CardDictionary.css";
+import "../static/styles/QuizCheck.css";
 import {useState} from 'react';
 import {ConfirmationWindow} from '../components/dictionary/ConfirmationWindow';
 import {WordEditModal} from '../components/dictionary/WordEditModal';
 import {dictionaryApi} from '../api/dictionaryApi';
 import {subscriptionAPI} from "../api/subscriptionApi";
+
 
 export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdateDictionary}) => {
     const navigate = useNavigate();
@@ -202,7 +204,7 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
                                         <span className={`badge ${dict.isPublic ? 'bg-success' : 'bg-secondary'}`}>
                                             {dict.isPublic ? <FaLockOpen/> : <FaLock/>}
                                         </span>
-                                        <div className="form-check top-0 start-0 m-2">
+                                        <div className="quiz-check form-check top-0 start-0 m-2">
                                             <input
                                                 className="form-check-input"
                                                 type="checkbox"
