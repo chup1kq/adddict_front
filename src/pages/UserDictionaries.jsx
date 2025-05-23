@@ -121,6 +121,9 @@ export const UserDictionaries = ({dictionaries, isMine, setDictionaries, onUpdat
         );
     };
 
+    if (!Array.isArray(dictionaries)) {
+        return <div>Загрузка данных...</div>;
+    }
 
     return (
         <>

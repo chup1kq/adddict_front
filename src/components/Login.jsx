@@ -9,7 +9,7 @@ import {useAuth} from "../context/AuthContext";
 const apiUrl = "http://localhost:8081/api/v1";
 
 export function Login() {
-    const {setToken, setUser} = useAuth();
+    const { setToken, setUser, token, user } = useAuth();
     const [login, setLogin] = useState(
         localStorage.getItem("savedLogin") || ""
     );
@@ -49,8 +49,8 @@ export function Login() {
             setToken(data);
             setUser(login);
 
-            // Перенаправляем на главную страницу
-            navigate("/");
+            navigate("/feed");
+
 
         } catch (error) {
             setErrors([{
@@ -58,6 +58,7 @@ export function Login() {
             }]);
         }
     }
+
 
     useEffect(() => {
         localStorage.setItem("savedLogin", login);
