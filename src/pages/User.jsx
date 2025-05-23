@@ -133,14 +133,16 @@ export const User = () => {
 
                         {/* Анимированное подчёркивание */}
                         <div
-                            className="position-absolute bottom-0 bg-primary"
+                            className="position-absolute bottom-0"
                             style={{
                                 height: '3px',
                                 width: `${underlineStyle.width}px`,
                                 left: `${underlineStyle.left}px`,
+                                backgroundColor: '#d4a373',
                                 transition: 'all 0.3s ease-in-out'
                             }}
                         />
+
                     </div>
                 </div>
             </div>
