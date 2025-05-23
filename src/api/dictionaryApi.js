@@ -80,6 +80,15 @@ export const dictionaryApi = {
         return response.ok;
     },
 
+    async getPublicDictionaries(id) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/${id}`);
+
+        if (!response.ok) {
+            throw new Error('Ошибка при удалении словаря');
+        }
+        return await response.json();
+    },
+
     async getDictFeed(page = 0, token) {
         const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/feed?page=${page}`, {
             headers: {

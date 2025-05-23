@@ -1,22 +1,23 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { FaEdit, FaTrash } from 'react-icons/fa';
-import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow';
-import { WordEditModal } from '../components/dictionary/WordEditModal';
-import { Button } from "../components/Button";
+import {useEffect, useState} from 'react';
+import {useAuth} from '../context/AuthContext';
+import {FaEdit, FaTrash} from 'react-icons/fa';
+import {ConfirmationWindow} from '../components/dictionary/ConfirmationWindow';
+import {WordEditModal} from '../components/dictionary/WordEditModal';
+import {Button} from "../components/Button";
 // import { dictionaryApi } from '../api/dictionaryApi';
 import "../static/styles/WordCard.css";
-import { useNavigate } from "react-router-dom";
-import { useParams, useLocation } from 'react-router-dom';
+import {useNavigate} from "react-router-dom";
+import {useParams, useLocation} from 'react-router-dom';
 import {dictionaryApi} from "../api/dictionaryApi";
 import {translateAPI} from "../api/translateAPI";
+import {subscriptionAPI} from "../api/subscriptionApi";
 
 export const Dictionary = () => {
     const location = useLocation();
     const navigate = useNavigate();
     const isMine = location.state?.isMine || false;
-    const { id } = useParams();
-    const { user } = useAuth();
+    const {id} = useParams();
+    const {user} = useAuth();
     const [dictionary, setDictionary] = useState(null);
     const [words, setWords] = useState([]);
     const [page, setPage] = useState(0);
@@ -30,6 +31,8 @@ export const Dictionary = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentWord, setCurrentWord] = useState(null);
     const [showUnsubscribeModal, setShowUnsubscribeModal] = useState(false);
+    const [isSubscribed, setIsSubscribed] = useState(null);
+
 
     const wordToDelete = words.find(word => word.id === wordToDeleteId);
 
@@ -92,7 +95,7 @@ export const Dictionary = () => {
         setShowDictionaryDeleteModal(true);
     };
 
-    const handleSaveDictionary = async ({ original, translation, checked }) => {
+    const handleSaveDictionary = async ({original, translation, checked}) => {
         try {
             const token = localStorage.getItem('token');
             const updated = await dictionaryApi.updateDictionary(
@@ -132,11 +135,11 @@ export const Dictionary = () => {
     };
 
     const handleAddWordClick = () => {
-        setCurrentWord({ original: '', translation: '' });
+        setCurrentWord({original: '', translation: ''});
         setShowEditModal(true);
     };
 
-    const handleSaveWord = async ({ original, translation }) => {
+    const handleSaveWord = async ({original, translation}) => {
         try {
             const token = localStorage.getItem('token');
 
@@ -223,6 +226,26 @@ export const Dictionary = () => {
         }
     };
 
+    const checkSubscribe = async (dictId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const subscribed = await subscriptionAPI.isSubscribedToDictionary(dictId, token);
+            setIsSubscribed(subscribed);
+        } catch (error) {
+            console.error('Ошибка проверки подписки:', error);
+        }
+    };
+
+    const handleSubscriptionClick = async () => {
+
+    }
+
+    useEffect(() => {
+        if (dictionary?.id && !isMine) {
+            checkSubscribe(dictionary.id);
+        }
+    }, [dictionary, isMine]);
+
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
@@ -256,12 +279,14 @@ export const Dictionary = () => {
                                         </button>
                                     </>
                                 ) : (
-                                    <button
-                                        className="btn btn-outline-danger btn-sm"
-                                        onClick={handleUnsubscribeClick}
-                                    >
-                                        Отписаться от словаря
-                                    </button>
+                                    isSubscribed !== null && (
+                                        <button
+                                            className={`btn btn-outline-${isSubscribed ? 'danger' : 'success'} btn-sm`}
+                                            onClick={isSubscribed ? handleUnsubscribeClick : handleSubscriptionClick}
+                                        >
+                                            {isSubscribed ? 'Отписаться' : 'Подписаться'}
+                                        </button>
+                                    )
                                 )
                             )}
                         </div>
@@ -272,27 +297,28 @@ export const Dictionary = () => {
                     {words.map(word => (
                         <div key={word.id} className="col">
                             <div className="card h-100 border-0 shadow-sm position-relative">
-                                <div className="card-body p-3" style={{ background: '#f8f9fa' }}>
+                                <div className="card-body p-3" style={{background: '#f8f9fa'}}>
                                     <div className="d-flex flex-column">
                                         <span className="fw-bold text-break mb-2">{word.original}</span>
                                         <span className="text-muted text-break">{word.translation}</span>
                                     </div>
                                 </div>
                                 {user && isMine && (
-                                    <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
+                                    <div
+                                        className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
                                         <button
                                             className="btn btn-sm text-primary p-1 mb-1 btn-word"
                                             onClick={() => handleEditClick(word)}
                                             aria-label="Редактировать"
                                         >
-                                            <FaEdit size={14} color={"#d4a373"} />
+                                            <FaEdit size={14} color={"#d4a373"}/>
                                         </button>
                                         <button
                                             className="btn btn-sm text-danger p-1"
                                             onClick={() => handleDeleteClick(word.id)}
                                             aria-label="Удалить"
                                         >
-                                            <FaTrash size={14} />
+                                            <FaTrash size={14}/>
                                         </button>
                                     </div>
                                 )}

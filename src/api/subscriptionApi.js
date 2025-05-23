@@ -52,5 +52,18 @@ export const subscriptionAPI = {
             throw new Error('Ошибка при получении списка подписок');
         }
         return await response.json();
+    },
+
+
+    async isSubscribedToDictionary(id, token) {
+        const response = await fetch(`${SUBSCRIPTION_API_BASE_URL}/subscribed/${id}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Ошибка при определении подписки на слова');
+        }
+        return response.json();
     }
 };

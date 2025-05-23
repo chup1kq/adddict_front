@@ -8,6 +8,7 @@ import {useAuth} from "../context/AuthContext";
 import {useRoutes} from "react-router-dom";
 import {Quiz} from "../pages/Quiz";
 import {FeedDictionaries} from "../pages/DictFeed";
+import {Search} from "../pages/Search";
 
 export const AppRoutes = () => {
     const {token} = useAuth();
@@ -48,6 +49,10 @@ export const AppRoutes = () => {
         {
             path: '/feed',
             element: <FeedDictionaries />,
+        },
+        {
+            path: '/search',
+            element: <Search />,
         }
     ]);
 }
