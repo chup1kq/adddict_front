@@ -2,7 +2,7 @@ const DICTIONARY_API_BASE_URL = 'http://localhost:8080/api/v1/dictionaries';
 
 export const dictionaryApi = {
     async getMyDictionaries(page = 0, token) {
-        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list?page=${page}`, {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/me?page=${page}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
