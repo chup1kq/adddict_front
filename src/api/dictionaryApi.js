@@ -13,8 +13,8 @@ export const dictionaryApi = {
         return await response.json();
     },
 
-    async getSubscribedDictionaries(token) {
-        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/subscribed`, {
+    async getSubscribedDictionaries(page = 0, token) {
+        const response = await fetch(`${DICTIONARY_API_BASE_URL}/list/subscribed?page=${page}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
