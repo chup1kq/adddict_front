@@ -14,10 +14,20 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
     const [dictionaryForAction, setDictionaryForAction] = useState(null); // Объединяем в одно состояние
     const [actionType, setActionType] = useState(null); // 'delete' или 'unsubscribe'
 
-    const handleDictionaryClick = (dictId) => {
-        // тестовый рабочий запрос на localhost:8080
-        console.log(dictionaryApi.getDictionary(3, localStorage.getItem("token")));
-        navigate(`/dictionaries/${dictId}`, { state: { isMine } });
+    const handleDictionaryClick = async (dictionaryId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const dictionary = await dictionaryApi.getDictionary(dictionaryId, token);
+            navigate(`/dictionaries/${dictionaryId}`, {
+                state: {
+                    dictionary,
+                    isMine: isMine
+                }
+            });
+        } catch (error) {
+            console.error('Ошибка при загрузке словаря:', error);
+            alert('Не удалось загрузить словарь');
+        }
     };
 
     const handleDropdownClick = (e) => {
