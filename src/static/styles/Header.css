@@ -1,6 +1,6 @@
 .navbar {
-    height: 10vh;
-    color: #d4a373;
+    position: relative; /* чтобы содержимое вытесняло нижний контент */
+    z-index: auto; /* снимаем "поверх" */
 }
 
 .navbar a {
@@ -25,6 +25,13 @@
     text-decoration-color: transparent;
     transition: text-decoration-color 0.3s ease-in-out;
 }
+
+.navbar-collapse {
+    position: relative !important;
+    z-index: auto;
+    background-color: transparent;
+}
+
 
 .auth:hover {
     text-decoration-line: underline;
