@@ -28,21 +28,25 @@ export const FeedDictionaries = () => {
 
     useEffect(() => {
         getFeedDictionaries();
-    })
+    }, [])
 
     return (
         <>
-        <div className="container-fluid">
-            <div className="row mt-3 mb-4">
-                <div className="col-12">
-                    <PublicDictionaries
-                        dictionaries={feedDictionaries}
-                        isMine={false}
-                        userLogin={user}
-                    />
+            <div className="container-fluid">
+                <div className="d-flex justify-content-center align-items-center mb-2" style={{minHeight: '50px'}}>
+                <span className="display-6 text-center fw-bold me-3">
+                    {"Ваша подборка рекомендаций"}
+                </span>
+                </div>
+                <div className="row mt-3 mb-4">
+                    <div className="col-12">
+                        <PublicDictionaries
+                            dictionaries={feedDictionaries}
+                            isMine={false}
+                        />
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     )
 };
