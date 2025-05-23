@@ -208,35 +208,35 @@ export const Dictionary = () => {
                         <p className="text-muted mb-3">{dictionary.description}</p>
                         <div className="d-flex gap-2">
                             {user && (
-                                <button
-                                    className="btn custom-outline-btn btn-sm"
-                                    onClick={handleAddWordClick}
-                                >
-                                    Добавить слово
-                                </button>
-                            )}
-                            {isMine ? (
-                                <>
-                                    <button
-                                        className="btn btn-outline-secondary btn-sm"
-                                        onClick={handleDictionaryEditClick}
-                                    >
-                                        Редактировать словарь
-                                    </button>
+                                isMine ? (
+                                    <>
+                                        <button
+                                            className="btn custom-outline-btn btn-sm"
+                                            onClick={handleAddWordClick}
+                                        >
+                                            Добавить слово
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-secondary btn-sm"
+                                            onClick={handleDictionaryEditClick}
+                                        >
+                                            Редактировать словарь
+                                        </button>
+                                        <button
+                                            className="btn btn-outline-danger btn-sm"
+                                            onClick={handleDictionaryDeleteClick}
+                                        >
+                                            Удалить словарь
+                                        </button>
+                                    </>
+                                ) : (
                                     <button
                                         className="btn btn-outline-danger btn-sm"
-                                        onClick={handleDictionaryDeleteClick}
+                                        onClick={handleUnsubscribeClick}
                                     >
-                                        Удалить словарь
+                                        Отписаться от словаря
                                     </button>
-                                </>
-                            ) : (
-                                <button
-                                    className="btn btn-outline-danger btn-sm"
-                                    onClick={handleUnsubscribeClick}
-                                >
-                                    Отписаться от словаря
-                                </button>
+                                )
                             )}
                         </div>
                     </div>
@@ -252,22 +252,24 @@ export const Dictionary = () => {
                                         <span className="text-muted text-break">{word.translation}</span>
                                     </div>
                                 </div>
-                                <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
-                                    <button
-                                        className="btn btn-sm text-primary p-1 mb-1 btn-word"
-                                        onClick={() => handleEditClick(word)}
-                                        aria-label="Редактировать"
-                                    >
-                                        <FaEdit size={14} color={"#d4a373"} />
-                                    </button>
-                                    <button
-                                        className="btn btn-sm text-danger p-1"
-                                        onClick={() => handleDeleteClick(word.id)}
-                                        aria-label="Удалить"
-                                    >
-                                        <FaTrash size={14} />
-                                    </button>
-                                </div>
+                                {user && isMine && (
+                                    <div className="position-absolute end-0 top-50 translate-middle-y d-flex flex-column me-2">
+                                        <button
+                                            className="btn btn-sm text-primary p-1 mb-1 btn-word"
+                                            onClick={() => handleEditClick(word)}
+                                            aria-label="Редактировать"
+                                        >
+                                            <FaEdit size={14} color={"#d4a373"} />
+                                        </button>
+                                        <button
+                                            className="btn btn-sm text-danger p-1"
+                                            onClick={() => handleDeleteClick(word.id)}
+                                            aria-label="Удалить"
+                                        >
+                                            <FaTrash size={14} />
+                                        </button>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     ))}
