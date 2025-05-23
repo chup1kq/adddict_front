@@ -25,6 +25,7 @@ export const Dictionary = () => {
     const [wordToDeleteId, setWordToDeleteId] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [currentWord, setCurrentWord] = useState(null);
+    const [showUnsubscribeModal, setShowUnsubscribeModal] = useState(false);
 
     const wordToDelete = words.find(word => word.id === wordToDeleteId);
 
@@ -35,7 +36,7 @@ export const Dictionary = () => {
                 // Тестовые данные вместо API запроса
                 const dictData = {
                     id: parseInt(id),
-                    name: `Словарь животных`,
+                    name: 'Словарь животных',
                     description: 'Тестовый словарь с животными',
                     isPublic: true,
                     createdAt: "2025-05-10T01:02:05.617498",
@@ -180,6 +181,21 @@ export const Dictionary = () => {
         }
     };
 
+    const handleUnsubscribeClick = () => {
+        setShowUnsubscribeModal(true);
+    };
+
+    const handleConfirmUnsubscribe = async () => {
+        try {
+            console.log('Отписка от словаря:', dictionary.id);
+            // Здесь должна быть логика отписки через API
+            // navigate('/dictionaries');
+            setShowUnsubscribeModal(false);
+        } catch (error) {
+            console.error('Ошибка отписки:', error);
+        }
+    };
+
     if (!dictionary) return <div>Загрузка...</div>;
 
     return (
@@ -198,7 +214,7 @@ export const Dictionary = () => {
                                     Добавить слово
                                 </button>
                             )}
-                            {isMine && (
+                            {isMine ? (
                                 <>
                                     <button
                                         className="btn btn-outline-secondary btn-sm"
@@ -213,6 +229,13 @@ export const Dictionary = () => {
                                         Удалить словарь
                                     </button>
                                 </>
+                            ) : (
+                                <button
+                                    className="btn btn-outline-danger btn-sm"
+                                    onClick={handleUnsubscribeClick}
+                                >
+                                    Отписаться от словаря
+                                </button>
                             )}
                         </div>
                     </div>
@@ -311,6 +334,19 @@ export const Dictionary = () => {
                     title="Удалить словарь?"
                     message={`Действительно хотите удалить словарь "${dictionary.name}"?`}
                     confirmText="Удалить"
+                    cancelText="Отмена"
+                    confirmVariant="danger"
+                />
+            )}
+
+            {showUnsubscribeModal && (
+                <ConfirmationWindow
+                    show={showUnsubscribeModal}
+                    onCancel={() => setShowUnsubscribeModal(false)}
+                    onConfirm={handleConfirmUnsubscribe}
+                    title="Отписаться от словаря?"
+                    message={`Действительно хотите отписаться от словаря "${dictionary.name}"?`}
+                    confirmText="Отписаться"
                     cancelText="Отмена"
                     confirmVariant="danger"
                 />
