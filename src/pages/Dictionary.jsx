@@ -211,16 +211,16 @@ export const Dictionary = () => {
     };
 
 
-    const handleUnsubscribeClick = () => {
+    const handleUnsubscribeClick = (dictId) => {
         setShowUnsubscribeModal(true);
     };
 
-    const handleConfirmUnsubscribe = async () => {
+    const handleConfirmUnsubscribe = async (dictId) => {
         try {
-            console.log('Отписка от словаря:', dictionary.id);
-            // Здесь должна быть логика отписки через API
-            navigate('/account');
+            const token = localStorage.getItem('token');
+            const subscribed = await subscriptionAPI.unsubscribeFromDictionaryById(dictId, token);
             setShowUnsubscribeModal(false);
+            setIsSubscribed(false);
         } catch (error) {
             console.error('Ошибка отписки:', error);
         }
@@ -236,8 +236,14 @@ export const Dictionary = () => {
         }
     };
 
-    const handleSubscriptionClick = async () => {
-
+    const handleSubscriptionClick = async (dictId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const subscribed = await subscriptionAPI.subscribeToDictionary(dictId, token);
+            setIsSubscribed(true);
+        } catch (error) {
+            console.error('Ошибка проверки подписки:', error);
+        }
     }
 
     useEffect(() => {
@@ -282,7 +288,9 @@ export const Dictionary = () => {
                                     isSubscribed !== null && (
                                         <button
                                             className={`btn btn-outline-${isSubscribed ? 'danger' : 'success'} btn-sm`}
-                                            onClick={isSubscribed ? handleUnsubscribeClick : handleSubscriptionClick}
+                                            onClick={isSubscribed ?
+                                                () => handleUnsubscribeClick(dictionary.id) :
+                                                () => handleSubscriptionClick(dictionary.id)}
                                         >
                                             {isSubscribed ? 'Отписаться' : 'Подписаться'}
                                         </button>
@@ -398,7 +406,7 @@ export const Dictionary = () => {
                 <ConfirmationWindow
                     show={showUnsubscribeModal}
                     onCancel={() => setShowUnsubscribeModal(false)}
-                    onConfirm={handleConfirmUnsubscribe}
+                    onConfirm={() => handleConfirmUnsubscribe(dictionary.id)}
                     title="Отписаться от словаря?"
                     message={`Действительно хотите отписаться от словаря "${dictionary.name}"?`}
                     confirmText="Отписаться"
