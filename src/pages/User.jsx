@@ -131,7 +131,7 @@ export const User = () => {
                 )}
             </div>
 
-            <div className="row mt-3">
+            <div className="row mt-3 mb-4">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ? (
                         <UserDictionaries dictionaries={myDictionaries} isMine={true} />
@@ -139,6 +139,16 @@ export const User = () => {
                         <UserDictionaries dictionaries={subscribedDictionaries} isMine={false} />
                     )}
                 </div>
+            </div>
+
+            <div className="container px-5">
+                <button
+                    className="text-center btn custom-outline-btn mb-4"
+                    // TODO тут пока что такая заглушка
+                    onClick={() => null}
+                >
+                    Загрузить еще
+                </button>
             </div>
 
             <WordEditModal
