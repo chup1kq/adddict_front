@@ -4,45 +4,6 @@ import { useAuth } from "../context/AuthContext";
 import { WordEditModal } from "../components/dictionary/WordEditModal";
 import { dictionaryApi } from "../api/dictionaryApi";
 
-const dictionaries = {
-    your: [
-        {
-            id: 1,
-            name: 'Животные',
-            description: 'словарь для животных',
-            isPublic: false,
-            createdAt: 1686825045000,
-            authorId: 1,
-        },
-        {
-            id: 2,
-            name: 'Блюда',
-            description: 'Японская кухня',
-            isPublic: true,
-            createdAt: 1686826045000,
-            authorId: 1,
-        },
-        {
-            id: 3,
-            name: 'просто словарь',
-            description: '',
-            isPublic: false,
-            createdAt: 1646826045000,
-            authorId: 1,
-        },
-    ],
-    strangers: [
-        {
-            id: 4,
-            name: 'Древесина',
-            description: 'справочник для лесоруба',
-            isPublic: true,
-            createdAt: 1686826005000,
-            authorId: 2,
-        }
-    ]
-};
-
 export const User = () => {
     const { user } = useAuth();
     const [activeTab, setActiveTab] = useState('dictionaries');
@@ -97,6 +58,12 @@ export const User = () => {
             fetchDictionaries();
         }
     }, [user]);
+
+    const updateMyDictionary = (updatedDict) => {
+        setMyDictionaries(prev =>
+            prev.map(dict => dict.id === updatedDict.id ? updatedDict : dict)
+        );
+    };
 
     const handleAddDictionary = async ({ original, translation, checked }) => {
         const dictToAdd = {
@@ -181,12 +148,21 @@ export const User = () => {
             <div className="row mt-3 mb-4">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
-                        <UserDictionaries dictionaries={myDictionaries} isMine={true}/> :
-                        <UserDictionaries dictionaries={subscribedDictionaries} isMine={false}/>}
+                        <UserDictionaries
+                            dictionaries={myDictionaries}
+                            isMine={true}
+                            setDictionaries={setMyDictionaries}
+                            onUpdateDictionary={updateMyDictionary}
+                        /> :
+                        <UserDictionaries
+                            dictionaries={subscribedDictionaries}
+                            isMine={false}
+                        />
+                    }
                 </div>
             </div>
 
-            <div className="container px-5">
+            <div className="container px-5 text-center">
                 <button
                     className="text-center btn custom-outline-btn mb-4"
                     // TODO тут пока что такая заглушка

@@ -6,7 +6,7 @@ import { ConfirmationWindow } from '../components/dictionary/ConfirmationWindow'
 import { WordEditModal } from '../components/dictionary/WordEditModal';
 import { dictionaryApi } from '../api/dictionaryApi';
 
-export const UserDictionaries = ({ dictionaries, isMine }) => {
+export const UserDictionaries = ({ dictionaries, isMine, setDictionaries, onUpdateDictionary }) => {
     const navigate = useNavigate();
     const [showConfirmModal, setShowConfirmModal] = useState(false); // Объединяем в одно состояние
     const [showEditModal, setShowEditModal] = useState(false);
@@ -60,7 +60,11 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
             try {
                 await dictionaryApi.deleteDictionary(dictionaryForAction.id, localStorage.getItem("token"));
                 console.log('Словарь удалён:', dictionaryForAction.id);
-                // Здесь можно обновить список словарей, если есть такая логика
+                if (isMine) {
+                    setDictionaries(prev =>
+                        prev.filter(dict => dict.id !== dictionaryForAction.id)
+                    );
+                }
             } catch (error) {
                 console.error('Ошибка при удалении словаря:', error);
                 alert('Не удалось удалить словарь.');
@@ -79,7 +83,14 @@ export const UserDictionaries = ({ dictionaries, isMine }) => {
                 isPublic: !checked
             }, localStorage.getItem("token"));
             console.log('Словарь обновлён:', currentDictionary.id);
-            // Здесь можно обновить список словарей, если есть логика перерисовки
+            if (onUpdateDictionary) {
+                onUpdateDictionary({
+                    ...currentDictionary,
+                    name: original,
+                    description: translation,
+                    isPublic: !checked
+                });
+            }
         } catch (error) {
             console.error('Ошибка при сохранении словаря:', error);
             alert('Не удалось сохранить изменения.');
