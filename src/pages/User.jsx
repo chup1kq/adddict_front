@@ -97,8 +97,10 @@ export const User = () => {
 
     return (
         <div className={'container-fluid'}>
-            <div className={'row mb-4 align-content-center'}>
-                {user}
+            <div className="d-flex justify-content-center align-items-center mb-2" style={{minHeight: '60px'}}>
+                <span className="display-6 text-center fw-bold">
+                    {user}
+                </span>
             </div>
             <div className="row bg-light pt-3">
                 <div className="col-12">
@@ -110,9 +112,10 @@ export const User = () => {
                             ref={dictionariesRef}
                             className="px-4 pb-3 cursor-pointer"
                             onClick={() => setActiveTab('dictionaries')}
-                            style={{cursor:'pointer'}}
+                            style={{cursor: 'pointer'}}
                         >
-                            <span className={`fs-5 ${activeTab === 'dictionaries' ? 'text-dark fw-bold' : 'text-muted'}`}>
+                            <span
+                                className={`fs-5 ${activeTab === 'dictionaries' ? 'text-dark fw-bold' : 'text-muted'}`}>
                                 Ваши словари
                             </span>
                         </div>
@@ -120,9 +123,10 @@ export const User = () => {
                             ref={subscriptionsRef}
                             className="px-4 pb-3 cursor-pointer"
                             onClick={() => setActiveTab('subscriptions')}
-                            style={{cursor:'pointer'}}
+                            style={{cursor: 'pointer'}}
                         >
-                            <span className={`fs-5 ${activeTab === 'subscriptions' ? 'text-dark fw-bold' : 'text-muted'}`}>
+                            <span
+                                className={`fs-5 ${activeTab === 'subscriptions' ? 'text-dark fw-bold' : 'text-muted'}`}>
                                 Подписки
                             </span>
                         </div>
@@ -153,8 +157,8 @@ export const User = () => {
             <div className="row mt-3">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
-                        <UserDictionaries dictionaries={dictionaries.your} isMine={true} /> :
-                        <UserDictionaries dictionaries={dictionaries.strangers} isMine={false} />}
+                        <UserDictionaries dictionaries={dictionaries.your} isMine={true}/> :
+                        <UserDictionaries dictionaries={dictionaries.strangers} isMine={false}/>}
                 </div>
             </div>
 
