@@ -8,6 +8,8 @@ import { Button } from "../components/Button";
 import "../static/styles/WordCard.css";
 import { useNavigate } from "react-router-dom";
 import { useParams, useLocation } from 'react-router-dom';
+import {dictionaryApi} from "../api/dictionaryApi";
+import {translateAPI} from "../api/translateAPI";
 
 export const Dictionary = () => {
     const location = useLocation();
@@ -35,35 +37,28 @@ export const Dictionary = () => {
         const fetchDictionary = async () => {
             setIsLoading(true);
             try {
-                // Тестовые данные вместо API запроса
-                const dictData = {
-                    id: parseInt(id),
-                    name: 'Словарь животных',
-                    description: 'Тестовый словарь с животными',
-                    isPublic: true,
-                    createdAt: "2025-05-10T01:02:05.617498",
-                    authorId: 1,
-                };
-                setDictionary(dictData);
+                const token = localStorage.getItem('token');
 
-                // Тестовые данные слов (первая страница)
-                const testWords = [
-                    { id: 1, original: 'Pandas', translation: 'Панды' },
-                    { id: 2, original: 'elephant', translation: 'СЛОН' },
-                    { id: 3, original: 'GiRaFfE', translation: 'жираф' },
-                    { id: 4, original: 'cat', translation: 'кот' },
-                    { id: 5, original: 'mouse', translation: 'мышь' },
-                ];
-                setWords(testWords);
-                setHasMore(true); // Предполагаем, что есть еще данные
+                const data = await dictionaryApi.getDictionary(id, token);
+                setDictionary(data);
+
+                const translations = await translateAPI.getDictionaryWords(id, 0, token);
+                setWords(translations.page.content.map(w => ({
+                    id: w.id,
+                    original: w.originText,
+                    translation: w.translationText
+                })));
+
+                setHasMore(true);
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
+                console.error('Ошибка загрузки словаря:', error);
             } finally {
                 setIsLoading(false);
             }
         };
         fetchDictionary();
     }, [id]);
+
 
     const loadMoreWords = async () => {
         if (isLoading || !hasMore) return;
@@ -119,6 +114,7 @@ export const Dictionary = () => {
 
     const handleConfirmDictionaryDelete = async () => {
         try {
+            await dictionaryApi.deleteDictionary(dictionary.id, localStorage.getItem("token"));
             console.log('Удаление словаря:', dictionary.id);
             // Здесь должна быть логика удаления через API
             navigate('/account');
