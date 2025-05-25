@@ -1,16 +1,22 @@
-import { UserDictionaries } from "./UserDictionaries";
-import { useState, useRef, useEffect } from 'react';
-import { useAuth } from "../context/AuthContext";
-import { WordEditModal } from "../components/dictionary/WordEditModal";
-import { dictionaryApi } from "../api/dictionaryApi";
+import {UserDictionaries} from "./UserDictionaries";
+import {useState, useRef, useEffect} from 'react';
+import {useAuth} from "../context/AuthContext";
+import {WordEditModal} from "../components/dictionary/WordEditModal";
+import {dictionaryApi} from "../api/dictionaryApi";
 
 export const User = () => {
-    const { user } = useAuth();
+    const {user} = useAuth();
     const [activeTab, setActiveTab] = useState('dictionaries');
-    const [underlineStyle, setUnderlineStyle] = useState({ width: 0, left: 0 });
+    const [underlineStyle, setUnderlineStyle] = useState({width: 0, left: 0});
     const [showAddDictionaryModal, setShowAddDictionaryModal] = useState(false);
     const [myDictionaries, setMyDictionaries] = useState([]);
     const [subscribedDictionaries, setSubscribedDictionaries] = useState([]);
+    const [pageMyDict, setPageMyDict] = useState(0);
+    const [pageSubDict, setPageSubDict] = useState(0);
+    const [maxPageMy, setMaxPageMy] = useState(0);
+    const [maxPageSub, setMaxPageSub] = useState(0);
+    const [hasMoreMy, setHasMoreMy] = useState(true);
+    const [hasMoreSub, setHasMoreSub] = useState(true);
 
     const dictionariesRef = useRef(null);
     const subscriptionsRef = useRef(null);
@@ -49,6 +55,12 @@ export const User = () => {
                 ]);
                 setMyDictionaries(myData.page.content);
                 setSubscribedDictionaries(subscribedData.page.content);
+
+                setMaxPageMy(myData.page.totalPages);
+                setMaxPageSub(subscribedData.page.totalPages);
+
+                setHasMoreMy(pageMyDict + 1 < maxPageMy);
+                setHasMoreSub(pageSubDict + 1 < maxPageSub);
             } catch (error) {
                 console.error("Ошибка при загрузке словарей:", error);
             }
@@ -59,13 +71,40 @@ export const User = () => {
         }
     }, [user]);
 
+    const loadMoreMyDictionaries = async () => {
+        const nextPage = pageMyDict + 1;
+        const token = localStorage.getItem("token");
+        try {
+            const data = await dictionaryApi.getMyDictionaries(nextPage, token);
+            setMyDictionaries(prev => [...prev, ...data.page.content]);
+            setPageMyDict(nextPage);
+            setHasMoreMy(pageMyDict + 1 < maxPageMy);
+        } catch (error) {
+            console.error("Ошибка при подгрузке моих словарей:", error);
+        }
+    };
+
+    const loadMoreSubscribedDictionaries = async () => {
+        const nextPage = pageSubDict + 1;
+        const token = localStorage.getItem("token");
+        try {
+            const data = await dictionaryApi.getSubscribedDictionaries(nextPage, token);
+            setSubscribedDictionaries(prev => [...prev, ...data.page.content]);
+            setPageSubDict(nextPage);
+            setHasMoreSub(pageSubDict + 1 < maxPageSub);
+        } catch (error) {
+            console.error("Ошибка при подгрузке подписок:", error);
+        }
+    };
+
+
     const updateMyDictionary = (updatedDict) => {
         setMyDictionaries(prev =>
             prev.map(dict => dict.id === updatedDict.id ? updatedDict : dict)
         );
     };
 
-    const handleAddDictionary = async ({ original, translation, checked }) => {
+    const handleAddDictionary = async ({original, translation, checked}) => {
         const dictToAdd = {
             name: original,
             description: translation,
@@ -74,7 +113,6 @@ export const User = () => {
 
         try {
             await dictionaryApi.createDictionary(dictToAdd, localStorage.getItem("token"));
-            // Перезапрашиваем список словарей
             const token = localStorage.getItem("token");
             const myData = await dictionaryApi.getMyDictionaries(0, token);
             setMyDictionaries(myData.page.content);
@@ -99,7 +137,7 @@ export const User = () => {
                             ref={dictionariesRef}
                             className="px-4 pb-3"
                             onClick={() => setActiveTab('dictionaries')}
-                            style={{ cursor: 'pointer' }}
+                            style={{cursor: 'pointer'}}
                         >
                             <span
                                 className={`fs-5 ${activeTab === 'dictionaries' ? 'text-dark fw-bold' : 'text-muted'}`}>
@@ -110,13 +148,13 @@ export const User = () => {
                             ref={subscriptionsRef}
                             className="px-4 pb-3 cursor-pointer"
                             onClick={() => setActiveTab('subscriptions')}
-                            style={{cursor:'pointer'}}
+                            style={{cursor: 'pointer'}}
                         >
-                            <span className={`fs-5 ${activeTab === 'subscriptions' ? 'text-dark fw-bold' : 'text-muted'}`}>
+                            <span
+                                className={`fs-5 ${activeTab === 'subscriptions' ? 'text-dark fw-bold' : 'text-muted'}`}>
                                 Подписки
                             </span>
                         </div>
-
                         {/* Анимированное подчёркивание */}
                         <div
                             className="position-absolute bottom-0"
@@ -141,7 +179,6 @@ export const User = () => {
                     </button>
                 )}
             </div>
-
             <div className="row mt-3 mb-4">
                 <div className="col-12">
                     {activeTab === 'dictionaries' ?
@@ -159,17 +196,22 @@ export const User = () => {
                     }
                 </div>
             </div>
-
-            <div className="container px-5 text-center">
-                <button
-                    className="text-center btn custom-outline-btn mb-4"
-                    // TODO тут пока что такая заглушка
-                    onClick={() => null}
-                >
-                    Загрузить еще
-                </button>
-            </div>
-
+            {(activeTab === 'dictionaries' ? hasMoreMy : hasMoreSub) && (
+                <div className="container px-5 text-center">
+                    <button
+                        className="text-center btn custom-outline-btn mb-4"
+                        onClick={() => {
+                            if (activeTab === 'dictionaries') {
+                                loadMoreMyDictionaries();
+                            } else {
+                                loadMoreSubscribedDictionaries();
+                            }
+                        }}
+                    >
+                        Загрузить еще
+                    </button>
+                </div>
+            )}
             <WordEditModal
                 show={showAddDictionaryModal}
                 onCancel={() => setShowAddDictionaryModal(false)}

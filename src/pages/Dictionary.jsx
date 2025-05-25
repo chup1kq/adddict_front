@@ -4,7 +4,6 @@ import {FaEdit, FaTrash} from 'react-icons/fa';
 import {ConfirmationWindow} from '../components/dictionary/ConfirmationWindow';
 import {WordEditModal} from '../components/dictionary/WordEditModal';
 import {Button} from "../components/Button";
-// import { dictionaryApi } from '../api/dictionaryApi';
 import "../static/styles/WordCard.css";
 import {useNavigate} from "react-router-dom";
 import {useParams, useLocation} from 'react-router-dom';
@@ -128,7 +127,6 @@ export const Dictionary = () => {
         try {
             await dictionaryApi.deleteDictionary(dictionary.id, localStorage.getItem("token"));
             console.log('Удаление словаря:', dictionary.id);
-            // Здесь должна быть логика удаления через API
             navigate('/account');
             setShowDictionaryDeleteModal(false);
         } catch (error) {
