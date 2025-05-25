@@ -49,7 +49,7 @@ export function Login() {
             setToken(data);
             setUser(login);
 
-            navigate("/feed");
+            navigate("/");
 
 
         } catch (error) {

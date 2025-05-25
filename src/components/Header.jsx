@@ -10,7 +10,7 @@ export const Header = () => {
     return (
         <nav className="navbar navbar-expand-sm navbar-light bg-light px-5">
             <div className="container-fluid">
-                <a className="navbar-brand" href="/feed">AddDict</a>
+                <a className="navbar-brand" href="/">AddDict</a>
                 <button
                     className="navbar-toggler"
                     type="button"

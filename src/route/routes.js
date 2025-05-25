@@ -19,10 +19,6 @@ export const AppRoutes = () => {
             element: <NotFound/>,
         },
         {
-            path: '/',
-            element: '',
-        },
-        {
             path: '/registration',
             element: <Registration/>,
         },
@@ -47,7 +43,7 @@ export const AppRoutes = () => {
             element: <Dictionary />,
         },
         {
-            path: '/feed',
+            path: '',
             element: <FeedDictionaries />,
         },
         {
