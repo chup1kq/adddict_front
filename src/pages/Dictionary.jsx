@@ -11,6 +11,7 @@ import {useParams, useLocation} from 'react-router-dom';
 import {dictionaryApi} from "../api/dictionaryApi";
 import {translateAPI} from "../api/translateAPI";
 import {subscriptionAPI} from "../api/subscriptionApi";
+import {NotFound} from "../components/404";
 
 export const Dictionary = () => {
     const location = useLocation();
@@ -32,6 +33,7 @@ export const Dictionary = () => {
     const [currentWord, setCurrentWord] = useState(null);
     const [showUnsubscribeModal, setShowUnsubscribeModal] = useState(false);
     const [isSubscribed, setIsSubscribed] = useState(null);
+    const [isNotFound, setIsNotFound] = useState(false);
 
 
     const wordToDelete = words.find(word => word.id === wordToDeleteId);
@@ -53,8 +55,10 @@ export const Dictionary = () => {
                 })));
 
                 setHasMore(true);
+                setIsNotFound(false);
             } catch (error) {
                 console.error('Ошибка загрузки словаря:', error);
+                setIsNotFound(true);
             } finally {
                 setIsLoading(false);
             }
@@ -252,7 +256,13 @@ export const Dictionary = () => {
         }
     }, [dictionary, isMine]);
 
-    if (!dictionary) return <div>Загрузка...</div>;
+    if(isNotFound) {
+        return <NotFound />
+    }
+
+    if (!dictionary) {
+        return <div>Загрузка...</div>;
+    }
 
     return (
         <>
