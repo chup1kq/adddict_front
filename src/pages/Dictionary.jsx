@@ -22,6 +22,7 @@ export const Dictionary = () => {
     const [dictionary, setDictionary] = useState(null);
     const [words, setWords] = useState([]);
     const [page, setPage] = useState(0);
+    const [maxPage, setMaxPage] = useState(0);
     const [hasMore, setHasMore] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -54,7 +55,9 @@ export const Dictionary = () => {
                     translation: w.translationText
                 })));
 
-                setHasMore(true);
+                setPage(0);
+                setMaxPage(translations.page.totalPages);
+                setHasMore(page + 1 < maxPage);
                 setIsNotFound(false);
             } catch (error) {
                 console.error('Ошибка загрузки словаря:', error);
@@ -82,7 +85,7 @@ export const Dictionary = () => {
 
             setWords(prev => [...prev, ...newWords]);
             setPage(prev => prev + 1);
-            setHasMore(!response.page.last); // Если это последняя страница — прекращаем загрузки
+            setHasMore(page + 1 < maxPage);
         } catch (error) {
             console.error('Ошибка загрузки следующей страницы:', error);
         } finally {
